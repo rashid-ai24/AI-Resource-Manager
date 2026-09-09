@@ -1,0 +1,363 @@
+# AI Resource Manager v2 — Continue Development (Phase 5)
+
+Project Status
+
+The following phases are already COMPLETE.
+
+✅ Phase 0 — Project Cleanup
+✅ Phase 1 — Infrastructure
+✅ Phase 2 — Database
+✅ Phase 3 — Repository Layer
+✅ Phase 4 — Service Layer
+
+Do NOT recreate them.
+
+Do NOT modify working implementations unless a critical bug exists.
+
+Read the documentation and continue development from the next phase.
+
+------------------------------------------------------------
+
+# Mandatory Reading
+
+Before writing any code read completely
+
+AI_Resource_Manager_v2_Master_Blueprint.md
+
+IMPLEMENTATION_GUIDE.md
+
+TASKS.md
+
+AGENT_RULES.md
+
+CODE_REVIEW_CHECKLIST.md
+
+AI_CODING_PLAYBOOK.md
+
+Determine
+
+Current completed phase
+
+Remaining phases
+
+Pending tasks
+
+Dependencies
+
+Required reusable components
+
+------------------------------------------------------------
+
+# Current Objective
+
+Begin Phase 5.
+
+Build the reusable UI foundation.
+
+DO NOT build feature pages first.
+
+Build the shared design system first.
+
+Everything should be reusable.
+
+------------------------------------------------------------
+
+# Phase 5 Deliverables
+
+Implement
+
+Layout Components
+
+• AppLayout
+
+• Sidebar
+
+• TopNavbar
+
+• PageContainer
+
+• PageHeader
+
+• Breadcrumbs
+
+• StatusBar
+
+Navigation
+
+• Navigation Rail
+
+• Sidebar Groups
+
+• Search Entry
+
+• Recent Items
+
+• Favorites
+
+Cards
+
+• StatCard
+
+• EntityCard
+
+• MetricCard
+
+• EmptyCard
+
+• ActivityCard
+
+• DashboardCard
+
+Feedback
+
+• LoadingSpinner
+
+• Skeleton
+
+• EmptyState
+
+• ErrorState
+
+• SuccessState
+
+Badges
+
+• StatusBadge
+
+• ProviderBadge
+
+• AgentBadge
+
+• ModelBadge
+
+Buttons
+
+• CopyButton
+
+• IconButton
+
+• ActionButton
+
+• SplitButton
+
+Dialogs
+
+• BaseDialog
+
+• ConfirmDialog
+
+• DeleteDialog
+
+• SettingsDialog
+
+Utilities
+
+• Tooltip
+
+• Popover
+
+• Dropdown
+
+• Context Menu
+
+• Keyboard Shortcut Display
+
+Theme
+
+• Theme Provider
+
+• Theme Switcher
+
+• Design Tokens
+
+• Global Typography
+
+• Spacing System
+
+• Color System
+
+------------------------------------------------------------
+
+# Requirements
+
+Every component must
+
+Use shadcn/ui
+
+Use Radix primitives
+
+Use Tailwind v4
+
+Use Motion where appropriate
+
+Support Dark Mode
+
+Support Light Mode
+
+Support keyboard navigation
+
+Support accessibility
+
+Support loading states
+
+Support empty states where applicable
+
+------------------------------------------------------------
+
+# Generic Design
+
+Never create page-specific components.
+
+Everything should be reusable.
+
+Before creating a component
+
+Search the project.
+
+Reuse existing code.
+
+If similar code exists
+
+Refactor.
+
+Do not duplicate.
+
+------------------------------------------------------------
+
+# Folder Organization
+
+Place components in their correct folders.
+
+components/
+
+layout/
+
+navigation/
+
+cards/
+
+common/
+
+dialogs/
+
+ui/
+
+feedback/
+
+Never create miscellaneous folders.
+
+------------------------------------------------------------
+
+# Documentation Updates
+
+This is mandatory.
+
+After implementation update
+
+TASKS.md
+
+Mark completed tasks.
+
+Update progress percentages.
+
+------------------------------------------------------------
+
+Update
+
+IMPLEMENTATION_GUIDE.md
+
+Mark Phase 5 complete.
+
+Update milestone progress.
+
+------------------------------------------------------------
+
+Update
+
+AI_Resource_Manager_v2_Master_Blueprint.md
+
+If
+
+new reusable components exist
+
+component hierarchy changes
+
+folder structure changes
+
+relationships change
+
+------------------------------------------------------------
+
+Update
+
+CODE_REVIEW_CHECKLIST.md
+
+if new review rules become necessary.
+
+------------------------------------------------------------
+
+Update
+
+AI_CODING_PLAYBOOK.md
+
+with any new reusable development patterns discovered.
+
+------------------------------------------------------------
+
+# Validation
+
+Before completing
+
+Run build.
+
+Fix all errors.
+
+Fix all TypeScript issues.
+
+Fix all lint issues.
+
+Verify
+
+Dark Mode
+
+Light Mode
+
+Keyboard Navigation
+
+Accessibility
+
+Responsive desktop layout
+
+------------------------------------------------------------
+
+# Session Report
+
+Provide
+
+Current Phase
+
+Tasks Completed
+
+Components Created
+
+Components Reused
+
+Files Created
+
+Files Modified
+
+Documentation Updated
+
+Progress %
+
+Remaining Tasks
+
+Next Recommended Phase
+
+Known Issues
+
+Technical Debt
+
+Do not continue into Phase 6.
+
+Finish Phase 5 completely before moving on.
