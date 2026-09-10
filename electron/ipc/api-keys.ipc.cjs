@@ -1,0 +1,73 @@
+const { ipcMain } = require('electron');
+const repositories = require('../repositories/index.cjs');
+const { ApiKeyCreateSchema, ApiKeyUpdateSchema, ListFilterSchema } = require('../lib/validators.cjs');
+
+function registerApiKeyHandlers() {
+  const repo = repositories.apiKeys;
+
+  ipcMain.handle('api-keys:list', async (event, filters = {}) => {
+    try {
+      const validatedFilters = ListFilterSchema.parse(filters);
+      const data = repo.findAllWithRelations(validatedFilters);
+      return { success: true, data };
+    } catch (error) {
+      console.error('api-keys:list failed:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('api-keys:get', async (event, id) => {
+    try {
+      const data = repo.findByIdWithRelations(id);
+      if (!data) {
+        return { success: false, error: 'API Key not found' };
+      }
+      return { success: true, data };
+    } catch (error) {
+      console.error('api-keys:get failed:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('api-keys:create', async (event, data) => {
+    try {
+      const validated = ApiKeyCreateSchema.parse(data);
+      const apiKey = repo.create(validated);
+      return { success: true, data: repo.findByIdWithRelations(apiKey.id) };
+    } catch (error) {
+      console.error('api-keys:create failed:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('api-keys:update', async (event, id, data) => {
+    try {
+      const validated = ApiKeyUpdateSchema.parse(data);
+      repo.update(id, validated);
+      const apiKey = repo.findByIdWithRelations(id);
+      if (!apiKey) {
+        return { success: false, error: 'API Key not found' };
+      }
+      return { success: true, data: apiKey };
+    } catch (error) {
+      console.error('api-keys:update failed:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('api-keys:delete', async (event, id) => {
+    try {
+      const apiKey = repo.findById(id);
+      if (!apiKey) {
+        return { success: false, error: 'API Key not found' };
+      }
+      repo.delete(id);
+      return { success: true, data: { id } };
+    } catch (error) {
+      console.error('api-keys:delete failed:', error);
+      return { success: false, error: error.message };
+    }
+  });
+}
+
+module.exports = { registerApiKeyHandlers };

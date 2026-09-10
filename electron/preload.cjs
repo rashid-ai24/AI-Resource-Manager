@@ -56,11 +56,15 @@ contextBridge.exposeInMainWorld('api', {
     create: (data) => ipcRenderer.invoke('tags:create', data),
     update: (id, data) => ipcRenderer.invoke('tags:update', id, data),
     delete: (id) => ipcRenderer.invoke('tags:delete', id),
+    getByEntity: (entityType, entityId) => ipcRenderer.invoke('tags:getByEntity', entityType, entityId),
+    addToEntity: (entityType, entityId, tagId) => ipcRenderer.invoke('tags:addToEntity', entityType, entityId, tagId),
+    removeFromEntity: (entityType, entityId, tagId) => ipcRenderer.invoke('tags:removeFromEntity', entityType, entityId, tagId),
   },
   settings: {
     get: (key) => ipcRenderer.invoke('settings:get', key),
-    set: (key, value) => ipcRenderer.invoke('settings:set', key, value),
+    set: (key, value, description) => ipcRenderer.invoke('settings:set', key, value, description),
     getAll: () => ipcRenderer.invoke('settings:getAll'),
+    delete: (key) => ipcRenderer.invoke('settings:delete', key),
   },
   db: {
     backup: (path) => ipcRenderer.invoke('db:backup', path),
@@ -72,5 +76,9 @@ contextBridge.exposeInMainWorld('api', {
     minimize: () => ipcRenderer.invoke('window:minimize'),
     maximize: () => ipcRenderer.invoke('window:maximize'),
     close: () => ipcRenderer.invoke('window:close'),
+  },
+  app: {
+    version: () => ipcRenderer.invoke('app:version'),
+    path: () => ipcRenderer.invoke('app:path'),
   },
 });
