@@ -1,7 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
-import { Moon, Sun, LayoutDashboard, Bot, Building2, Cpu, Key, FolderOpen, FileText, Tag, Settings } from 'lucide-react';
+import { Moon, Sun, LayoutDashboard, Bot, Building2, Cpu, Key, FolderOpen, FileText, Tag, Settings, ChevronLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { ThemeSwitcher } from './common/ThemeSwitcher';
 
 const links = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -15,44 +17,62 @@ const links = [
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export default function Sidebar() {
-  const { theme, toggleTheme } = useTheme();
-
+export default function Sidebar({ collapsed = false, onToggleCollapse }) {
   return (
-    <aside className="w-56 min-h-full bg-sidebar border-r border-sidebar-border flex flex-col">
-      <div className="p-5 border-b border-sidebar-border">
-        <h1 className="text-base font-bold text-sidebar-foreground tracking-tight">AI Resource Manager</h1>
-        <p className="text-xs text-muted-foreground mt-0.5">v2.0.0</p>
-      </div>
-      <nav className="flex-1 p-3 gap-1 flex flex-col">
+    <aside className={cn(
+      'h-full bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300',
+      collapsed ? 'w-16' : 'w-56'
+    )}>
+      {!collapsed && (
+        <div className="p-5 border-b border-sidebar-border">
+          <h1 className="text-base font-bold text-sidebar-foreground tracking-tight">AI Resource Manager</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">v2.0.0</p>
+        </div>
+      )}
+
+      <nav className={cn(
+        'flex-1 p-3 gap-1 flex flex-col',
+        collapsed && 'items-center'
+      )}>
         {links.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
             end={to === '/'}
             className={({ isActive }) =>
-              `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              cn(
+                'flex items-center gap-2.5 rounded-lg text-sm font-medium transition-colors',
+                collapsed ? 'justify-center p-2' : 'px-3 py-2',
                 isActive
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                   : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
-              }`
+              )
             }
+            title={collapsed ? label : undefined}
           >
-            <Icon className="size-4" />
-            {label}
+            <Icon className="size-4 shrink-0" />
+            {!collapsed && <span>{label}</span>}
           </NavLink>
         ))}
       </nav>
-      <div className="p-3 border-t border-sidebar-border">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleTheme}
-          className="w-full justify-start gap-2.5 text-muted-foreground hover:text-sidebar-foreground"
-        >
-          {theme === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
-          {theme === 'light' ? 'Dark' : 'Light'} Mode
-        </Button>
+
+      <div className={cn(
+        'p-3 border-t border-sidebar-border',
+        collapsed && 'flex flex-col items-center gap-2'
+      )}>
+        {!collapsed && <ThemeSwitcher className="w-full" />}
+        {collapsed && <ThemeSwitcher size="icon" />}
+        {onToggleCollapse && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleCollapse}
+            className="text-muted-foreground hover:text-sidebar-foreground"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <ChevronLeft className={cn('size-4 transition-transform', collapsed && 'rotate-180')} />
+          </Button>
+        )}
       </div>
     </aside>
   );
