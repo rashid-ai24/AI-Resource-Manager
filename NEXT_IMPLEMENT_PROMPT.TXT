@@ -1,14 +1,274 @@
-Read `NEXT_IMPLEMENT_PLAN.TXT` and implement the current phase completely.
+Fix the current SQLite startup/database initialization failure.
 
-* Read the project docs and global skills first.
-* Inspect the existing code before making changes.
-* Do not assume or invent anything.
-* Follow the existing architecture and conventions.
-* Implement only the current phase, not future phases.
-* Run the required build/tests and fix any issues.
-* Update the relevant documentation.
-* After the phase is fully verified, determine the next official phase from the project docs.
-* Create the complete implementation plan for the next phase (if available) and replace `NEXT_IMPLEMENT_PLAN.TXT` with it.
-* Then STOP. Do not implement the next phase.
+Current errors include:
 
-Report what was completed, verification results, remaining issues, and the next phase if available.
+```text
+SqliteError: no such table: agents
+SqliteError: no such table: providers
+SqliteError: no such table: settings
+SqliteError: no such table: tags
+SqliteError: no such table: models
+SqliteError: no such table: api_keys
+SqliteError: no such table: accounts
+SqliteError: no such table: projects
+SqliteError: no such table: notes
+```
+
+Important context:
+
+* Electron now starts successfully.
+* `better-sqlite3` native binding works.
+* Vite runs correctly on port `3557`.
+* IPC handlers register successfully.
+* Do NOT change the database driver.
+* Do NOT change the port.
+* Do NOT delete existing user data.
+* Do NOT create a second competing database system.
+
+## 1. Inspect the database implementation
+
+Inspect:
+
+* `electron/database.cjs`
+* database initialization code
+* migration runner
+* migration files/directories
+* database path configuration
+* Electron `app.getPath(...)` usage
+* repositories
+* `electron/main.cjs`
+* backup/restore service
+* package scripts
+
+Determine:
+
+1. Which exact `.db` file is being opened.
+2. Whether the file exists.
+3. Whether it is empty/new.
+4. Whether migrations are executed during startup.
+5. Where the migration files are located.
+6. Whether the migration path is correct in development.
+7. Whether the database path changed accidentally.
+8. Whether the application is opening a different database than expected.
+
+## 2. Inspect the actual database
+
+Do not guess.
+
+Determine the database path and inspect its SQLite schema.
+
+Verify whether these tables exist:
+
+```text
+agents
+providers
+models
+accounts
+api_keys
+projects
+notes
+tags
+settings
+activity_logs
+usage_logs
+```
+
+Also inspect the migration/version table if the project has one.
+
+## 3. Fix initialization
+
+Ensure that when the application starts:
+
+```text
+Open correct database
+        ↓
+Run migrations
+        ↓
+Create required tables
+        ↓
+Seed required defaults
+        ↓
+Register IPC handlers
+        ↓
+Renderer requests data
+```
+
+The database must be initialized **before IPC handlers can execute repository queries**.
+
+Do not merely catch/suppress:
+
+```text
+no such table
+```
+
+The tables must actually exist.
+
+## 4. Development and production paths
+
+Ensure migration/database paths work correctly in:
+
+* development (`npm run dev`)
+* production build
+* packaged Electron application
+
+Do not hardcode an absolute developer-specific path.
+
+Use the existing project conventions for application data directories.
+
+## 5. Preserve existing databases
+
+If an existing database contains data:
+
+* do not overwrite it
+* do not recreate it
+* run pending migrations against it
+
+If the current database is genuinely empty/new, initialize it through the project's migration system.
+
+Do not automatically delete or replace an existing database just to make the errors disappear.
+
+## 6. Check migration packaging
+
+If migrations are present but unavailable to Electron at runtime, determine whether Vite/Electron build configuration is excluding them.
+
+Fix the migration/resource handling so migrations are available in the correct runtime environment.
+
+Do not copy random files into `dist` without understanding the existing architecture.
+
+## 7. Verify all migrations
+
+Run the project's migration mechanism.
+
+Verify that the complete schema required by the application is created.
+
+Check especially the schema additions from previous phases, including:
+
+* agent fields/migrations
+* activity/usage tables
+* settings
+* API keys
+* tags
+* all other existing entities
+
+Do not create duplicate migrations if the required migration already exists.
+
+## 8. Test with a fresh database
+
+Use a temporary/test database or another safe isolated database.
+
+Verify that a fresh database can:
+
+1. initialize
+2. run all migrations
+3. create all required tables
+4. seed required defaults
+5. start the application
+6. successfully execute list queries
+
+Do not destroy the user's real database for this test.
+
+## 9. Test with an existing database
+
+If an existing project database is available, verify:
+
+* it opens
+* existing data remains
+* migrations are applied
+* repositories can query it
+* settings remain available
+* backup/restore remains compatible
+
+## 10. Verify application
+
+Run:
+
+```bash
+npm run dev
+```
+
+Expected:
+
+```text
+Vite → http://localhost:3557
+Electron → starts
+Database → correct database opened
+Migrations → completed
+IPC → registered
+Agents → loads
+Providers → loads
+Models → loads
+Accounts → loads
+API Keys → loads
+Projects → loads
+Notes → loads
+Tags → loads
+Settings → loads
+Analytics → loads
+```
+
+There must be no:
+
+```text
+no such table
+```
+
+errors.
+
+## 11. Run regression checks
+
+Run:
+
+```bash
+npm run build
+npm test
+```
+
+Also verify database-backed features.
+
+## 12. Do not hide the errors
+
+Do NOT solve this by:
+
+* suppressing SQLite errors
+* returning empty arrays from repositories
+* adding fake/mock data
+* disabling queries
+* skipping migrations
+* deleting the database
+* changing repository queries just to avoid the error
+
+Fix the database initialization/root cause.
+
+## 13. Separate warnings
+
+The following are separate from this database issue:
+
+```text
+Unknown input options: platform.
+```
+
+and Electron Chromium cache permission messages.
+
+Do not mix them into the SQLite fix.
+
+They can be addressed separately after the database is working.
+
+## Final report
+
+Report:
+
+1. Exact database path being used
+2. Why the required tables were missing
+3. Migration status before the fix
+4. Migration status after the fix
+5. Files changed
+6. Database/schema changes
+7. Whether existing data was preserved
+8. Fresh database test
+9. Existing database test
+10. `npm run dev` result
+11. `npm run build` result
+12. `npm test` result
+13. Remaining warnings/issues
+
+Do not claim completion until the application starts without any `no such table` errors.
