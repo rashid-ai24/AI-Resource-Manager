@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
-import { Moon, Sun, LayoutDashboard, Bot, Building2, Cpu, Key, FolderOpen, FileText, Tag, Settings, ChevronLeft, Search } from 'lucide-react';
+import { Moon, Sun, LayoutDashboard, Bot, Building2, Cpu, User, Key, FolderOpen, FileText, Tag, Settings, ChevronLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ThemeSwitcher } from './common/ThemeSwitcher';
@@ -10,6 +10,7 @@ const links = [
   { to: '/agents', label: 'AI Agents', icon: Bot },
   { to: '/providers', label: 'Providers', icon: Building2 },
   { to: '/models', label: 'Models', icon: Cpu },
+  { to: '/accounts', label: 'Accounts', icon: User },
   { to: '/api-keys', label: 'API Keys', icon: Key },
   { to: '/projects', label: 'Projects', icon: FolderOpen },
   { to: '/notes', label: 'Notes', icon: FileText },
