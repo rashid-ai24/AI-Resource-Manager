@@ -1,0 +1,142 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAccounts } from '../../../hooks/use-accounts';
+import { accountColumns } from './account-columns';
+import { AccountCard } from './account-card';
+import { PageHeader } from '../../layout/PageHeader';
+import { EmptyState } from '../../feedback/EmptyState';
+import { LoadingPage } from '../../feedback/LoadingSpinner';
+import { ErrorState } from '../../feedback/ErrorState';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { Badge } from '../../common/Badge';
+import { User, Plus, Search, LayoutGrid, List } from 'lucide-react';
+
+export function AccountList({ onCreateClick }) {
+  const navigate = useNavigate();
+  const [search, setSearch] = useState('');
+  const [viewMode, setViewMode] = useState('list');
+
+  const filters = {};
+  if (search) filters.search = search;
+
+  const { data: accounts, isLoading, error, refetch } = useAccounts(filters);
+
+  const handleRowClick = (account) => {
+    navigate(`/accounts/${account.id}`);
+  };
+
+  if (isLoading) return <LoadingPage label="Loading accounts..." />;
+  if (error) return <ErrorState error={error} onRetry={refetch} />;
+
+  const list = accounts || [];
+
+  return (
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title="Accounts"
+        description="Manage your provider accounts"
+        icon={User}
+        actions={
+          <Button onClick={onCreateClick}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Account
+          </Button>
+        }
+      />
+
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input
+            placeholder="Search accounts..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <div className="flex items-center gap-1 border rounded-md p-0.5">
+          <Button
+            variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+            size="icon"
+            className="size-8"
+            onClick={() => setViewMode('list')}
+          >
+            <List className="size-4" />
+          </Button>
+          <Button
+            variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+            size="icon"
+            className="size-8"
+            onClick={() => setViewMode('grid')}
+          >
+            <LayoutGrid className="size-4" />
+          </Button>
+        </div>
+        <Badge variant="secondary">{list.length}</Badge>
+      </div>
+
+      {list.length === 0 ? (
+        <EmptyState
+          icon={User}
+          title="No accounts found"
+          description={search ? 'Try a different search term.' : 'Add your first account to get started.'}
+          action={
+            !search && (
+              <Button onClick={onCreateClick}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Account
+              </Button>
+            )
+          }
+        />
+      ) : viewMode === 'grid' ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {list.map((account) => (
+            <AccountCard
+              key={account.id}
+              account={account}
+              onClick={handleRowClick}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-lg border">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                {accountColumns.map((col) => (
+                  <th
+                    key={col.accessorKey || col.id}
+                    className="h-10 px-4 text-left text-xs font-medium text-muted-foreground"
+                  >
+                    {col.header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((account) => (
+                <tr
+                  key={account.id}
+                  onClick={() => handleRowClick(account)}
+                  className="border-b last:border-b-0 hover:bg-muted/50 cursor-pointer transition-colors"
+                >
+                  {accountColumns.map((col) => (
+                    <td key={col.accessorKey || col.id} className="px-4 py-3">
+                      {col.cell
+                        ? col.cell({ row: { getValue: (key) => account[key], original: account } })
+                        : account[col.accessorKey]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default AccountList;
