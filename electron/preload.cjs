@@ -143,4 +143,14 @@ contextBridge.exposeInMainWorld('api', {
   health: {
     status: () => ipcRenderer.invoke('health:status'),
   },
+  update: {
+    check: () => ipcRenderer.invoke('update:check'),
+    install: () => ipcRenderer.invoke('update:install'),
+    onUpdateChecking: (callback) => ipcRenderer.on('update:checking', callback),
+    onUpdateAvailable: (callback) => ipcRenderer.on('update:available', (event, info) => callback(info)),
+    onUpdateNotAvailable: (callback) => ipcRenderer.on('update:not-available', callback),
+    onUpdateProgress: (callback) => ipcRenderer.on('update:progress', (event, progress) => callback(progress)),
+    onUpdateDownloaded: (callback) => ipcRenderer.on('update:downloaded', (event, info) => callback(info)),
+    onUpdateError: (callback) => ipcRenderer.on('update:error', (event, error) => callback(error)),
+  },
 });

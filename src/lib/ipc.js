@@ -494,6 +494,24 @@ export const healthApi = {
   },
 };
 
+// Update API
+export const updateApi = {
+  check: async () => {
+    const result = await api.update.check();
+    return handleResponse(result);
+  },
+  install: async () => {
+    const result = await api.update.install();
+    return handleResponse(result);
+  },
+  onUpdateChecking: (callback) => api.update.onUpdateChecking(callback),
+  onUpdateAvailable: (callback) => api.update.onUpdateAvailable(callback),
+  onUpdateNotAvailable: (callback) => api.update.onUpdateNotAvailable(callback),
+  onUpdateProgress: (callback) => api.update.onUpdateProgress(callback),
+  onUpdateDownloaded: (callback) => api.update.onUpdateDownloaded(callback),
+  onUpdateError: (callback) => api.update.onUpdateError(callback),
+};
+
 // Combined API export
 export const ipc = {
   agents: agentsApi,
@@ -515,6 +533,7 @@ export const ipc = {
   favorites: favoritesApi,
   templates: templatesApi,
   health: healthApi,
+  update: updateApi,
 };
 
 export default ipc;

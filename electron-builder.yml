@@ -1,0 +1,95 @@
+appId: com.ai-resource-manager.app
+productName: AI Resource Manager
+copyright: Copyright © 2024
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - package.json
+
+extraMetadata:
+  main: electron/main.cjs
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  icon: build/icon.ico
+  artifactName: ${productName}-${version}-win-${arch}.${ext}
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: AI Resource Manager
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.icns
+  category: public.app-category.developer-tools
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+
+dmg:
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+    - target: rpm
+      arch:
+        - x64
+  icon: build/icon.png
+  category: Development
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+
+appImage:
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+
+deb:
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+
+rpm:
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+
+publish:
+  provider: github
+  owner: rashid-ai24
+  repo: AI-Resource-Manager
+  releaseType: release
+
+afterSign: scripts/notarize.js
