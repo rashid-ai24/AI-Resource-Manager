@@ -336,25 +336,25 @@
 ## Phase 12: Accounts and API Keys
 
 ### Accounts
-- [ ] Create Accounts page
-- [ ] Create account-list component
-- [ ] Create account-card component
-- [ ] Create account-detail component
-- [ ] Create account-form component
-- [ ] Create account-columns
-- [ ] Create useAccounts hook
+- [x] Create Accounts page
+- [x] Create account-list component
+- [x] Create account-card component
+- [x] Create account-detail component
+- [x] Create account-form component
+- [x] Create account-columns
+- [x] Create useAccounts hook
 
 ### API Keys
-- [ ] Create API Keys page
-- [ ] Create api-key-list component
-- [ ] Create api-key-card component
-- [ ] Create api-key-detail component
-- [ ] Create api-key-form component
-- [ ] Create api-key-columns
-- [ ] Create useApiKeys hook
-- [ ] Implement SHA-256 hashing
-- [ ] Implement key prefix display
-- [ ] Implement expiration tracking
+- [x] Create API Keys page
+- [x] Create api-key-list component
+- [x] Create api-key-card component
+- [x] Create api-key-detail component
+- [x] Create api-key-form component
+- [x] Create api-key-columns
+- [x] Create useApiKeys hook
+- [x] Implement SHA-256 hashing
+- [x] Implement key prefix display
+- [x] Implement expiration tracking
 
 ---
 
