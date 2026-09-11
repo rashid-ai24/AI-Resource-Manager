@@ -1,6 +1,8 @@
 {
   "name": "ai-resource-manager",
   "version": "2.0.0",
+  "description": "A premium, offline-first desktop application for personal management of all AI-related resources.",
+  "author": "rashid-ai24",
   "private": true,
   "main": "electron/main.cjs",
   "type": "module",
@@ -147,8 +149,6 @@
     "clsx": "^2.1.1",
     "concurrently": "^10.0.5",
     "date-fns": "^4.1.0",
-    "electron": "^44.1.1",
-    "electron-updater": "^6.3.9",
     "lucide-react": "^1.40.0",
     "motion": "^11.11.0",
     "react": "^19.2.8",
@@ -172,7 +172,9 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
+    "electron": "^44.1.1",
     "electron-builder": "^25.1.8",
+    "electron-updater": "^6.3.9",
     "jsdom": "^30.0.1",
     "vitest": "^5.0.0"
   }
