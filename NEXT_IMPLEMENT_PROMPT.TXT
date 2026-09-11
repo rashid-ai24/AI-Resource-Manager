@@ -1,0 +1,9 @@
+Read NEXT_IMPLEMENT_PLAN.TXT completely. It is the authoritative implementation plan for the
+officially documented Phase 13: Search, Command Palette, Notes, Tags. Before modifying 
+anything, read global skills.md and all skills referenced by the plan. Then inspect the actual 
+codebase and verify the plan against the current implementation. Implement Phase 13 exactly 
+according to the plan. Do not assume, invent, or expand scope. Reuse existing Phase 5–12 
+architecture and components wherever applicable. Preserve existing functionality, especially 
+API-key security and existing IPC architecture. After implementation, run the repository's 
+actual verification/build commands, fix issues, update the required documentation, and report 
+exactly what was changed and verified.
