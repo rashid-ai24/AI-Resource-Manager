@@ -20,8 +20,8 @@
 | Phase 7: React Foundation | ✅ Completed | QueryClient, stores, validators, constants, page skeletons |
 | Phase 8: Form Engine | ✅ Completed | GenericForm, FormFieldRenderer, autocomplete, form-schemas |
 | Phase 9: Dashboard | ✅ Completed | 5 dashboard widgets, responsive grid layout |
-| Phase 10: Core Entities | ⏳ Pending | Providers, Models, Projects |
-| Phase 11: Agents | ⏳ Pending | Agent management |
+| Phase 10: Core Entities | ✅ Completed | Providers, Models, Projects |
+| Phase 11: Agents | ✅ Completed | Agent management |
 | Phase 12: Accounts/API Keys | ⏳ Pending | Account and key management |
 | Phase 13: Search/Commands | ⏳ Pending | Search, command palette |
 | Phase 14: Analytics | ⏳ Pending | Charts, activity |

@@ -39,6 +39,11 @@ export class AgentRepository extends BaseRepository {
       params.push(filters.model_id);
     }
 
+    if (filters.is_active !== undefined) {
+      conditions.push('a.is_active = ?');
+      params.push(filters.is_active);
+    }
+
     if (filters.tag_id) {
       conditions.push('at.tag_id = ?');
       params.push(filters.tag_id);

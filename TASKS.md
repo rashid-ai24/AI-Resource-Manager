@@ -289,48 +289,47 @@
 ## Phase 10: Core Entities (Providers, Models, Projects)
 
 ### Providers
-- [ ] Create Providers page
-- [ ] Create provider-list component
-- [ ] Create provider-card component
-- [ ] Create provider-detail component
-- [ ] Create provider-form component
-- [ ] Create provider-columns
-- [ ] Create useProviders hook
+- [x] Create Providers page
+- [x] Create provider-list component
+- [x] Create provider-card component
+- [x] Create provider-detail component
+- [x] Create provider-form component
+- [x] Create provider-columns
+- [x] Create useProviders hook
 
 ### Models
-- [ ] Create Models page
-- [ ] Create model-list component
-- [ ] Create model-card component
-- [ ] Create model-detail component
-- [ ] Create model-form component
-- [ ] Create model-columns
-- [ ] Create useModels hook
+- [x] Create Models page
+- [x] Create model-list component
+- [x] Create model-card component
+- [x] Create model-detail component
+- [x] Create model-form component
+- [x] Create model-columns
+- [x] Create useModels hook
 
 ### Projects
-- [ ] Create Projects page
-- [ ] Create project-list component
-- [ ] Create project-card component
-- [ ] Create project-detail component
-- [ ] Create project-form component
-- [ ] Create project-columns
-- [ ] Create useProjects hook
+- [x] Create Projects page
+- [x] Create project-list component
+- [x] Create project-card component
+- [x] Create project-detail component
+- [x] Create project-form component
+- [x] Create project-columns
+- [x] Create useProjects hook
 
 ---
 
 ## Phase 11: Agents
 
-- [ ] Create Agents page
-- [ ] Create agent-list component
-- [ ] Create agent-card component
-- [ ] Create agent-detail component
-- [ ] Create agent-form component
-- [ ] Create agent-columns
-- [ ] Create useAgents hook
-- [ ] Implement agent-model relationship
-- [ ] Implement agent-account relationship
-- [ ] Implement agent-project relationship
-- [ ] Implement agent tags
-- [ ] Implement agent notes
+- [x] Create Agents page
+- [x] Create agent-list component
+- [x] Create agent-card component
+- [x] Create agent-detail component
+- [x] Create agent-form component
+- [x] Create agent-columns
+- [x] Create useAgents hook
+- [x] Implement agent-model relationship
+- [x] Implement agent-provider relationship (DB has provider_id, not account_id/project_id)
+- [x] Implement agent tags
+- [x] Implement agent notes
 
 ---
 

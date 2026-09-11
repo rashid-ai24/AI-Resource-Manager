@@ -9,6 +9,7 @@ export const AgentFormSchema = z.object({
   system_prompt: z.string().max(10000).optional().default(''),
   temperature: z.number().min(0).max(2).optional().default(0.7),
   max_tokens: z.number().int().min(1).max(100000).optional().default(4096),
+  is_active: z.number().int().min(0).max(1).optional().default(1),
 });
 
 export const agentFormFields = [
@@ -60,6 +61,11 @@ export const agentFormFields = [
     type: 'number',
     min: 1,
     max: 100000,
+  },
+  {
+    name: 'is_active',
+    label: 'Active',
+    type: 'switch',
   },
 ];
 

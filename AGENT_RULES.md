@@ -20,8 +20,8 @@
 | Phase 7: React Foundation | ✅ Completed | 2026-09-10 |
 | Phase 8: Form Engine | ✅ Completed | 2026-09-10 |
 | Phase 9: Dashboard | ✅ Completed | 2026-09-11 |
-| Phase 10: Core Entities | ⏳ Pending | - |
-| Phase 11: Agents | ⏳ Pending | - |
+| Phase 10: Core Entities | ✅ Completed | 2026-09-11 |
+| Phase 11: Agents | ✅ Completed | 2026-09-11 |
 | Phase 12: Accounts/API Keys | ⏳ Pending | - |
 | Phase 13: Search/Commands | ⏳ Pending | - |
 | Phase 14: Analytics | ⏳ Pending | - |

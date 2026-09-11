@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS agents (
     system_prompt TEXT DEFAULT '',
     temperature REAL DEFAULT 0.7,
     max_tokens INTEGER DEFAULT 4096,
+    is_active INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (provider_id) REFERENCES providers(id) ON DELETE SET NULL,

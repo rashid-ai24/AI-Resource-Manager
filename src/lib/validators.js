@@ -9,6 +9,7 @@ export const AgentCreateSchema = z.object({
   system_prompt: z.string().optional().default(''),
   temperature: z.number().min(0).max(2).optional().default(0.7),
   max_tokens: z.number().int().positive().optional().default(4096),
+  is_active: z.number().int().min(0).max(1).optional().default(1),
 });
 
 export const AgentUpdateSchema = z.object({
@@ -19,6 +20,7 @@ export const AgentUpdateSchema = z.object({
   system_prompt: z.string().optional(),
   temperature: z.number().min(0).max(2).optional(),
   max_tokens: z.number().int().positive().optional(),
+  is_active: z.number().int().min(0).max(1).optional(),
 });
 
 // Provider schemas
