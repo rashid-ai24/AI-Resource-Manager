@@ -2,6 +2,12 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
 
+// Redirect Chromium cache to a subdirectory to avoid permission conflicts on Windows.
+// The default cache path (%LOCALAPPDATA%\APP_NAME\Cache) can produce
+// "Unable to move the cache: Access is denied" when a previous instance
+// left a lock file or when the directory is partially inaccessible.
+app.setPath('cache', path.join(app.getPath('userData'), 'cache'));
+
 // Import IPC handler registration functions
 const { registerAgentHandlers } = require('./ipc/agents.ipc.cjs');
 const { registerProviderHandlers } = require('./ipc/providers.ipc.cjs');
