@@ -10,7 +10,9 @@ import ProviderDetail from './components/features/providers/provider-detail';
 import Models from './pages/Models';
 import ModelDetail from './components/features/models/model-detail';
 import Accounts from './pages/Accounts';
+import AccountDetail from './components/features/accounts/account-detail';
 import ApiKeys from './pages/ApiKeys';
+import ApiKeyDetail from './components/features/api-keys/api-key-detail';
 import Projects from './pages/Projects';
 import ProjectDetail from './components/features/projects/project-detail';
 import Notes from './pages/Notes';
@@ -32,7 +34,9 @@ export default function App() {
               <Route path="models" element={<Models />} />
               <Route path="models/:id" element={<ModelDetail />} />
               <Route path="accounts" element={<Accounts />} />
+              <Route path="accounts/:id" element={<AccountDetail />} />
               <Route path="api-keys" element={<ApiKeys />} />
+              <Route path="api-keys/:id" element={<ApiKeyDetail />} />
               <Route path="projects" element={<Projects />} />
               <Route path="projects/:id" element={<ProjectDetail />} />
               <Route path="notes" element={<Notes />} />
