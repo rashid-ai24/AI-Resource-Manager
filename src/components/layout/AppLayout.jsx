@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import TitleBar from '../TitleBar';
 import Sidebar from '../Sidebar';
 import StatusBar from './StatusBar';
+import { PageTransition } from '../transitions/PageTransition';
 
 export function AppLayout({ children, className }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -18,7 +19,9 @@ export function AppLayout({ children, className }) {
         />
         <div className="flex-1 flex flex-col overflow-hidden">
           <main className="flex-1 overflow-auto">
-            {children || <Outlet />}
+            <PageTransition>
+              {children || <Outlet />}
+            </PageTransition>
           </main>
           <StatusBar />
         </div>

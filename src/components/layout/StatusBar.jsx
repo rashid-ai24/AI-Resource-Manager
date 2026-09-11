@@ -11,7 +11,7 @@ export function StatusBar({ className, online = true, dbStatus = 'connected' }) 
       )}
     >
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-1.5" title={online ? 'Online' : 'Offline'}>
+        <div className="flex items-center gap-1.5" role="status" aria-label={online ? 'Online' : 'Offline'}>
           {online ? (
             <Wifi className="size-3 text-emerald-500" />
           ) : (
@@ -20,7 +20,7 @@ export function StatusBar({ className, online = true, dbStatus = 'connected' }) 
           <span>{online ? 'Connected' : 'Offline'}</span>
         </div>
 
-        <div className="flex items-center gap-1.5" title={`Database: ${dbStatus}`}>
+        <div className="flex items-center gap-1.5" role="status" aria-label={`Database: ${dbStatus}`}>
           <Database className={cn(
             'size-3',
             dbStatus === 'connected' ? 'text-emerald-500' : 'text-destructive'

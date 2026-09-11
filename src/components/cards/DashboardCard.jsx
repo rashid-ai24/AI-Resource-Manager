@@ -11,10 +11,12 @@ export function DashboardCard({
   contentClassName,
   footer,
   compact = false,
+  interactive = false,
 }) {
   return (
     <div className={cn(
       'rounded-xl border bg-card text-card-foreground shadow-sm',
+      interactive && 'transition-shadow hover:shadow-md cursor-pointer',
       className
     )}>
       <div className={cn(

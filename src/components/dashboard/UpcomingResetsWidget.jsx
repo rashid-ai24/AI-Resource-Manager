@@ -1,33 +1,25 @@
-import { useQuery } from '@tanstack/react-query';
+import { useUpcomingResets } from '../../hooks/use-quotas';
 import { AlertTriangle, Clock, RefreshCw } from 'lucide-react';
 import { DashboardCard } from '../cards/DashboardCard';
 import { Skeleton } from '../ui/skeleton';
 import { Progress } from '../ui/progress';
 
 function UpcomingResetsWidget() {
-  const { data: resetsData, isLoading } = useQuery({
-    queryKey: ['dashboard', 'resets'],
-    queryFn: async () => {
-      // In a real app, this would fetch from the API
-      // For now, we'll return mock data
-      return [
-        { id: 1, type: 'Daily Token Limit', entity: 'OpenAI', current: 75000, limit: 100000, resetDate: new Date(Date.now() + 1000 * 60 * 60 * 6).toISOString() },
-        { id: 2, type: 'Monthly API Calls', entity: 'Anthropic', current: 450, limit: 500, resetDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5).toISOString() },
-        { id: 3, type: 'Daily Token Limit', entity: 'Google AI', current: 20000, limit: 100000, resetDate: new Date(Date.now() + 1000 * 60 * 60 * 12).toISOString() },
-      ];
-    },
-  });
+  const { data: resetsData, isLoading } = useUpcomingResets(5);
 
   function formatResetTime(dateString) {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((date - now) / (1000 * 60 * 60));
 
+    if (diffInHours < 0) return 'Overdue';
     if (diffInHours < 24) return `${diffInHours}h`;
     return `${Math.floor(diffInHours / 24)}d`;
   }
 
   function getUsagePercentage(current, limit) {
+    if (limit === 0) return 0;
     return Math.round((current / limit) * 100);
   }
 
@@ -50,10 +42,14 @@ function UpcomingResetsWidget() {
             </div>
           ))}
         </div>
+      ) : !resetsData || resetsData.length === 0 ? (
+        <div className="text-center py-4 text-muted-foreground text-sm">
+          No upcoming resets
+        </div>
       ) : (
         <div className="space-y-4">
-          {resetsData?.map((reset) => {
-            const percentage = getUsagePercentage(reset.current, reset.limit);
+          {resetsData.map((reset) => {
+            const percentage = getUsagePercentage(reset.used_value, reset.limit_value);
             const isWarning = percentage >= 80;
 
             return (
@@ -65,20 +61,20 @@ function UpcomingResetsWidget() {
                     ) : (
                       <Clock className="size-4 text-muted-foreground" />
                     )}
-                    <span className="text-sm font-medium">{reset.type}</span>
+                    <span className="text-sm font-medium">{reset.name}</span>
                   </div>
                   <span className="text-xs text-muted-foreground">
-                    Resets in {formatResetTime(reset.resetDate)}
+                    Resets in {formatResetTime(reset.next_reset_at)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Progress 
-                    value={percentage} 
+                  <Progress
+                    value={percentage}
                     className={`h-2 flex-1 ${isWarning ? 'bg-yellow-500/20' : ''}`}
                     indicatorClassName={isWarning ? 'bg-yellow-500' : ''}
                   />
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {reset.current.toLocaleString()} / {reset.limit.toLocaleString()}
+                    {reset.used_value.toLocaleString()} / {reset.limit_value.toLocaleString()}
                   </span>
                 </div>
               </div>

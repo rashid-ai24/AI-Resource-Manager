@@ -34,10 +34,13 @@ export default function Sidebar({ collapsed = false, onToggleCollapse }) {
         </div>
       )}
 
-      <nav className={cn(
-        'flex-1 p-3 gap-1 flex flex-col',
-        collapsed && 'items-center'
-      )}>
+      <nav
+        className={cn(
+          'flex-1 p-3 gap-1 flex flex-col',
+          collapsed && 'items-center'
+        )}
+        aria-label="Main navigation"
+      >
         {links.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}

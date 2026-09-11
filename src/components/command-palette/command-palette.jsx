@@ -68,6 +68,7 @@ export function CommandPalette() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="border-0 focus-visible:ring-0 shadow-none"
             autoFocus
+            aria-label="Search commands"
           />
         </div>
         <CommandList

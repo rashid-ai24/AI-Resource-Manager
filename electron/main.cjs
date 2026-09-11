@@ -15,6 +15,10 @@ const { registerActivityHandlers } = require('./ipc/activity.ipc.cjs');
 const { registerAnalyticsHandlers } = require('./ipc/analytics.ipc.cjs');
 const { registerBackupHandlers } = require('./ipc/backup.ipc.cjs');
 const { registerImportExportHandlers } = require('./ipc/import-export.ipc.cjs');
+const { registerQuotaHandlers } = require('./ipc/quotas.ipc.cjs');
+const { registerNotificationHandlers } = require('./ipc/notifications.ipc.cjs');
+const { registerFavoriteHandlers } = require('./ipc/favorites.ipc.cjs');
+const { registerTemplateHandlers } = require('./ipc/templates.ipc.cjs');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -52,6 +56,10 @@ function registerAllHandlers() {
   registerAnalyticsHandlers();
   registerBackupHandlers();
   registerImportExportHandlers();
+  registerQuotaHandlers();
+  registerNotificationHandlers();
+  registerFavoriteHandlers();
+  registerTemplateHandlers();
 
   // Window handlers
   ipcMain.handle('window:minimize', (event) => BrowserWindow.fromWebContents(event.sender)?.minimize());

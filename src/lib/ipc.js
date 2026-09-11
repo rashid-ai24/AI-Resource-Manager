@@ -334,6 +334,158 @@ export const analyticsApi = {
   },
 };
 
+// Quotas API
+export const quotasApi = {
+  list: async (filters = {}) => {
+    const result = await api.quotas.list(filters);
+    return handleResponse(result);
+  },
+  get: async (id) => {
+    const result = await api.quotas.get(id);
+    return handleResponse(result);
+  },
+  create: async (data) => {
+    const result = await api.quotas.create(data);
+    return handleResponse(result);
+  },
+  update: async (id, data) => {
+    const result = await api.quotas.update(id, data);
+    return handleResponse(result);
+  },
+  delete: async (id) => {
+    const result = await api.quotas.delete(id);
+    return handleResponse(result);
+  },
+  active: async () => {
+    const result = await api.quotas.active();
+    return handleResponse(result);
+  },
+  upcomingResets: async (limit = 10) => {
+    const result = await api.quotas.upcomingResets(limit);
+    return handleResponse(result);
+  },
+  expired: async () => {
+    const result = await api.quotas.expired();
+    return handleResponse(result);
+  },
+  updateUsage: async (id, usedValue) => {
+    const result = await api.quotas.updateUsage(id, usedValue);
+    return handleResponse(result);
+  },
+  incrementUsage: async (id, amount = 1) => {
+    const result = await api.quotas.incrementUsage(id, amount);
+    return handleResponse(result);
+  },
+  resetUsage: async (id) => {
+    const result = await api.quotas.resetUsage(id);
+    return handleResponse(result);
+  },
+};
+
+// Notifications API
+export const notificationsApi = {
+  list: async (filters = {}) => {
+    const result = await api.notifications.list(filters);
+    return handleResponse(result);
+  },
+  getUnread: async () => {
+    const result = await api.notifications.getUnread();
+    return handleResponse(result);
+  },
+  unreadCount: async () => {
+    const result = await api.notifications.unreadCount();
+    return handleResponse(result);
+  },
+  markAsRead: async (id) => {
+    const result = await api.notifications.markAsRead(id);
+    return handleResponse(result);
+  },
+  markAllAsRead: async () => {
+    const result = await api.notifications.markAllAsRead();
+    return handleResponse(result);
+  },
+  create: async (data) => {
+    const result = await api.notifications.create(data);
+    return handleResponse(result);
+  },
+  checkQuotas: async () => {
+    const result = await api.notifications.checkQuotas();
+    return handleResponse(result);
+  },
+  deleteOlderThan: async (date) => {
+    const result = await api.notifications.deleteOlderThan(date);
+    return handleResponse(result);
+  },
+};
+
+// Favorites API
+export const favoritesApi = {
+  list: async (filters = {}) => {
+    const result = await api.favorites.list(filters);
+    return handleResponse(result);
+  },
+  get: async (id) => {
+    const result = await api.favorites.get(id);
+    return handleResponse(result);
+  },
+  toggle: async (entityType, entityId, entityName = '', notes = '') => {
+    const result = await api.favorites.toggle(entityType, entityId, entityName, notes);
+    return handleResponse(result);
+  },
+  isFavorited: async (entityType, entityId) => {
+    const result = await api.favorites.isFavorited(entityType, entityId);
+    return handleResponse(result);
+  },
+  findByType: async (entityType) => {
+    const result = await api.favorites.findByType(entityType);
+    return handleResponse(result);
+  },
+  count: async (entityType) => {
+    const result = await api.favorites.count(entityType);
+    return handleResponse(result);
+  },
+  delete: async (id) => {
+    const result = await api.favorites.delete(id);
+    return handleResponse(result);
+  },
+};
+
+// Templates API
+export const templatesApi = {
+  list: async (filters = {}) => {
+    const result = await api.templates.list(filters);
+    return handleResponse(result);
+  },
+  get: async (id) => {
+    const result = await api.templates.get(id);
+    return handleResponse(result);
+  },
+  getConfig: async (id) => {
+    const result = await api.templates.getConfig(id);
+    return handleResponse(result);
+  },
+  create: async (data) => {
+    const result = await api.templates.create(data);
+    return handleResponse(result);
+  },
+  update: async (id, data) => {
+    const result = await api.templates.update(id, data);
+    return handleResponse(result);
+  },
+  delete: async (id) => {
+    const result = await api.templates.delete(id);
+    return handleResponse(result);
+  },
+  findByType: async (templateType) => {
+    const result = await api.templates.findByType(templateType);
+    return handleResponse(result);
+  },
+  duplicate: async (id) => {
+    const result = await api.templates.duplicate(id);
+    return handleResponse(result);
+  },
+};
+
 // Combined API export
 export const ipc = {
   agents: agentsApi,
@@ -350,6 +502,10 @@ export const ipc = {
   app: appApi,
   activity: activityApi,
   analytics: analyticsApi,
+  quotas: quotasApi,
+  notifications: notificationsApi,
+  favorites: favoritesApi,
+  templates: templatesApi,
 };
 
 export default ipc;

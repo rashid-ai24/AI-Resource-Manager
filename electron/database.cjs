@@ -49,6 +49,68 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_usage_model ON usage_logs(model_id);
   CREATE INDEX IF NOT EXISTS idx_usage_project ON usage_logs(project_id);
   CREATE INDEX IF NOT EXISTS idx_usage_timestamp ON usage_logs(timestamp);
+
+  CREATE TABLE IF NOT EXISTS quotas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    provider_id INTEGER,
+    account_id INTEGER,
+    name TEXT NOT NULL,
+    quota_type TEXT NOT NULL DEFAULT 'daily',
+    limit_value INTEGER NOT NULL DEFAULT 0,
+    used_value INTEGER NOT NULL DEFAULT 0,
+    unit TEXT DEFAULT 'tokens',
+    reset_interval TEXT DEFAULT 'daily',
+    next_reset_at TEXT,
+    is_active INTEGER DEFAULT 1,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
+    deleted_at TEXT,
+    FOREIGN KEY (provider_id) REFERENCES providers(id) ON DELETE SET NULL,
+    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS favorites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    entity_type TEXT NOT NULL,
+    entity_id INTEGER NOT NULL,
+    entity_name TEXT DEFAULT '',
+    notes TEXT DEFAULT '',
+    created_at TEXT DEFAULT (datetime('now')),
+    UNIQUE(entity_type, entity_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS templates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    template_type TEXT NOT NULL DEFAULT 'agent',
+    config_json TEXT DEFAULT '{}',
+    is_active INTEGER DEFAULT 1,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
+    deleted_at TEXT
+  );
+
+  CREATE TABLE IF NOT EXISTS notifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    notification_type TEXT DEFAULT 'info',
+    entity_type TEXT,
+    entity_id INTEGER,
+    is_read INTEGER DEFAULT 0,
+    action_url TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    deleted_at TEXT
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_quotas_provider ON quotas(provider_id);
+  CREATE INDEX IF NOT EXISTS idx_quotas_account ON quotas(account_id);
+  CREATE INDEX IF NOT EXISTS idx_quotas_next_reset ON quotas(next_reset_at);
+  CREATE INDEX IF NOT EXISTS idx_favorites_entity ON favorites(entity_type, entity_id);
+  CREATE INDEX IF NOT EXISTS idx_templates_type ON templates(template_type);
+  CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(is_read);
+  CREATE INDEX IF NOT EXISTS idx_notifications_created ON notifications(created_at);
 `);
 
 module.exports = db;

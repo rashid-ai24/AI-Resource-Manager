@@ -8,6 +8,11 @@
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:backend": "vitest run --config vitest.config.backend.js",
+    "test:backend:watch": "vitest --config vitest.config.backend.js",
     "electron:build": "electron-builder",
     "electron:build:win": "electron-builder --win",
     "electron:build:mac": "electron-builder --mac",
@@ -17,10 +22,10 @@
     "@base-ui/react": "^1.7.0",
     "@fontsource-variable/geist": "^5.3.0",
     "@hookform/resolvers": "^3.9.0",
+    "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-table": "^8.20.5",
     "@tanstack/react-virtual": "^3.10.0",
-    "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.1",
     "better-sqlite3": "^13.0.3",
     "class-variance-authority": "^0.7.1",
@@ -42,9 +47,15 @@
     "vite": "^8.2.2",
     "vite-plugin-electron": "^1.1.2",
     "wait-on": "^9.1.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "electron-builder": "^25.1.8"
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "electron-builder": "^25.1.8",
+    "jsdom": "^30.0.1",
+    "vitest": "^5.0.0"
   }
 }

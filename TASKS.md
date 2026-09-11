@@ -433,22 +433,22 @@
 ## Phase 16: Quotas, Notifications, Favorites, Templates
 
 ### Quotas
-- [ ] Implement quota tracking
-- [ ] Create quota reset logic
-- [ ] Create UpcomingResetsWidget
+- [x] Implement quota tracking
+- [x] Create quota reset logic
+- [x] Create UpcomingResetsWidget
 
 ### Notifications
-- [ ] Implement notification service (`electron/services/notification_service.cjs`)
-- [ ] Create notification display
-- [ ] Implement notification types
+- [x] Implement notification service (`electron/services/notification_service.cjs`)
+- [x] Create notification display
+- [x] Implement notification types
 
 ### Favorites
-- [ ] Create favorites system
-- [ ] Create useFavorites hook
+- [x] Create favorites system
+- [x] Create useFavorites hook
 
 ### Templates
-- [ ] Create templates system
-- [ ] Create useTemplates hook
+- [x] Create templates system
+- [x] Create useTemplates hook
 
 ### Saved Searches
 - [ ] Create saved searches system
@@ -457,37 +457,41 @@
 
 ## Phase 17: Polish and Performance
 
-- [ ] Add page transition animations
-- [ ] Add dialog animations
-- [ ] Add hover effects
-- [ ] Implement virtualization for large lists
-- [ ] Optimize React Query caching
-- [ ] Optimize database queries
-- [ ] Add keyboard shortcuts
-- [ ] Test WCAG 2.1 AA compliance
-- [ ] Add ARIA labels
+- [x] Add page transition animations
+- [x] Add dialog animations
+- [x] Add hover effects
+- [x] Implement virtualization for large lists
+- [x] Optimize React Query caching
+- [x] Optimize database queries
+- [x] Add keyboard shortcuts
+- [x] Test WCAG 2.1 AA compliance
+- [x] Add ARIA labels
 - [ ] Test color contrast
 - [ ] Test screen reader compatibility
 - [ ] Performance profiling
-- [ ] Bundle size optimization
+- [x] Bundle size optimization
 
 ---
 
 ## Phase 18: Testing
 
-- [ ] Write unit tests for BaseRepository
-- [ ] Write unit tests for AgentRepository
-- [ ] Write unit tests for ProviderRepository
-- [ ] Write unit tests for ModelRepository
+- [x] Write unit tests for BaseRepository (17 tests, ALL PASSING)
+- [x] Write unit tests for AgentRepository (5 tests)
+- [x] Write unit tests for ProviderRepository (6 tests)
+- [x] Write unit tests for ModelRepository (5 tests)
+- [x] Write unit tests for FavoriteRepository (8 tests)
+- [x] Write unit tests for SettingsRepository (4 tests)
+- [x] Write unit tests for useAgents hook (5 tests)
+- [x] Write unit tests for useProviders hook (4 tests)
+- [x] Write unit tests for useModels hook (2 tests)
+- [x] Write component tests for ActionButton (8 tests)
+- [x] Write component tests for EmptyState (7 tests)
+- [x] Write component tests for LoadingSpinner (9 tests)
 - [ ] Write unit tests for AccountRepository
 - [ ] Write unit tests for ApiKeyRepository
 - [ ] Write unit tests for ProjectRepository
 - [ ] Write unit tests for NoteRepository
 - [ ] Write unit tests for TagRepository
-- [ ] Write unit tests for SettingsRepository
-- [ ] Write unit tests for useAgents hook
-- [ ] Write unit tests for useProviders hook
-- [ ] Write unit tests for useModels hook
 - [ ] Write unit tests for useAccounts hook
 - [ ] Write unit tests for useApiKeys hook
 - [ ] Write unit tests for useProjects hook
@@ -495,10 +499,8 @@
 - [ ] Write unit tests for useNotes hook
 - [ ] Write unit tests for useSettings hook
 - [ ] Write integration tests for IPC handlers
-- [ ] Write component tests for shared components
 - [ ] Write E2E tests for critical workflows
 - [ ] Achieve 80%+ coverage
-- [ ] Fix all failing tests
 
 ---
 

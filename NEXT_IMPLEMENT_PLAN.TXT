@@ -1,5 +1,5 @@
-Phase 16: Quotas, Notifications, Favorites, Templates
-======================================================
+Phase 19: Deployment Preparation
+====================================
 
 PLAN STATUS: READY FOR IMPLEMENTATION
 
@@ -8,152 +8,87 @@ PLAN STATUS: READY FOR IMPLEMENTATION
 1. PHASE OVERVIEW
 ================================================================================
 
-Phase Number: 16
-Phase Name: Quotas, Notifications, Favorites, Templates
-Objective: Implement quota tracking with reset logic, a notification system with display and badge, a favorites system for pinning entities, and a templates system for reusable entity configurations.
+Phase Number: 19
+Phase Name: Deployment Preparation
+Objective: Prepare the application for production deployment by adding error boundaries, performance monitoring, environment configuration, and production build optimization.
 
 Documentation Sources:
-  - TASKS.md (lines 433-456)
-  - AI_Resource_Manager_v2_Master_Blueprint.md (Sections 27, 51, 54)
-  - IMPLEMENTATION_GUIDE.md (Phase 16 section, lines 1131-1186)
+  - TASKS.md
+  - AI_Resource_Manager_v2_Master_Blueprint.md
+  - IMPLEMENTATION_GUIDE.md
   - AGENT_RULES.md
   - AI_CODING_PLAYBOOK.md
   - CODE_REVIEW_CHECKLIST.md
 
 Dependencies:
-  - Phase 15 (Settings, Backup, Import/Export) — COMPLETE
-  - Settings IPC — COMPLETE
-  - Activity logging — COMPLETE
-  - Dashboard widgets — COMPLETE
-
-Database Tables Required:
-  - quotas — MUST be created (not in current schema)
-  - favorites — MUST be created (not in current schema)
-  - templates — MUST be created (not in current schema)
-  - notifications — MUST be created (not in current schema)
+  - Phase 18 (Testing) — COMPLETE
+  - Phase 17 (Polish and Performance) — COMPLETE
 
 
 ================================================================================
 2. CURRENT STATE ANALYSIS
 ================================================================================
 
-## 2.1 Quotas
+## 2.1 Error Handling
+- NO React error boundaries
+- NO global error handler
+- NO error reporting service
 
-### Database Table
-- DOES NOT EXIST. The quotas table is defined in the Master Blueprint ER diagram but has not been created in any migration.
+## 2.2 Performance Monitoring
+- NO performance metrics collection
+- NO bundle analysis in production
+- NO Web Vitals tracking
 
-### Quota Repository
-- DOES NOT EXIST
+## 2.3 Environment Configuration
+- NO environment-specific configs
+- NO feature flags
+- NO production optimizations
 
-### Quota IPC Handler
-- DOES NOT EXIST
-
-### UpcomingResetsWidget
-- EXISTS as a skeleton in dashboard but shows hardcoded data
-
-## 2.2 Notifications
-
-### Database Table
-- DOES NOT EXIST. The notifications table is defined in the Master Blueprint ER diagram but has not been created in any migration.
-
-### Notification Service
-- DOES NOT EXIST
-
-### Notification Display UI
-- DOES NOT EXIST (only settings toggle in Phase 15)
-
-## 2.3 Favorites
-
-### Database Table
-- DOES NOT EXIST. The favorites table is defined in the Master Blueprint ER diagram but has not been created in any migration.
-
-### Favorites Repository
-- DOES NOT EXIST
-
-### Favorites IPC Handler
-- DOES NOT EXIST
-
-### useFavorites Hook
-- DOES NOT EXIST
-
-## 2.4 Templates
-
-### Database Table
-- DOES NOT EXIST. The templates table is defined in the Master Blueprint ER diagram but has not been created in any migration.
-
-### Templates Repository
-- DOES NOT EXIST
-
-### Templates IPC Handler
-- DOES NOT EXIST
-
-### useTemplates Hook
-- DOES NOT EXIST
+## 2.4 Build Optimization
+- NO code splitting verification
+- NO tree-shaking optimization
+- NO production build validation
 
 
 ================================================================================
 3. GAP ANALYSIS
 ================================================================================
 
-## 3.1 Quotas
+## 3.1 Error Boundaries
 
-### Documentation Requirements:
-- Quota tracking for tokens, requests, cost
-- Reset intervals: daily, weekly, monthly
-- Quota notifications at 80%, 90%, 100% thresholds
-- UpcomingResetsWidget on dashboard
-
-### Current Implementation:
-- NO database table
-- NO repository
-- NO IPC handler
-- UpcomingResetsWidget exists but shows hardcoded data
-
-### Impact: FULL QUOTA SYSTEM REQUIRED (DB + backend + frontend)
-
-## 3.2 Notifications
-
-### Documentation Requirements:
-- Notification types: quota_reset, key_expiring, key_expired, backup_complete, import_complete, migration_complete
-- Notification display UI with badge
-- Mark as read functionality
+### Requirements:
+- React error boundaries for each route
+- Fallback UI for errors
+- Error logging
 
 ### Current Implementation:
-- NO database table
-- NO notification service
-- NO notification display
+- NO error boundaries
 
-### Impact: FULL NOTIFICATION SYSTEM REQUIRED
+### Impact: APPLICATION CRASHES WITHOUT RECOVERY
 
-## 3.3 Favorites
+## 3.2 Performance Monitoring
 
-### Documentation Requirements:
-- Add/remove favorites
-- List favorites by entity type
-- Unique constraint: (entity_type, entity_id)
+### Requirements:
+- Web Vitals tracking (LCP, FID, CLS)
+- Custom performance metrics
+- Error tracking in production
 
 ### Current Implementation:
-- NO database table
-- NO repository
-- NO IPC handler
-- NO hook
+- NO monitoring
 
-### Impact: FULL FAVORITES SYSTEM REQUIRED
+### Impact: NO VISIBILITY INTO PRODUCTION PERFORMANCE
 
-## 3.4 Templates
+## 3.3 Environment Configuration
 
-### Documentation Requirements:
-- Create template from entity data
-- Create entity from template
-- Template name, entity_type, config (JSON)
+### Requirements:
+- Environment-specific API endpoints
+- Feature flags for gradual rollout
+- Debug mode toggle
 
 ### Current Implementation:
-- NO database table
-- NO repository
-- NO IPC handler
-- NO hook
+- NO environment config
 
-### Impact: FULL TEMPLATES SYSTEM REQUIRED
+### Impact: ONE-SIZE-FITS-ALL CONFIGURATION
 
 
 ================================================================================
@@ -163,358 +98,144 @@ Database Tables Required:
 ## 4.1 Build Order
 
 ```
-Step 1: Database migration — create quotas, favorites, templates, notifications tables
-Step 2: Quota repository + IPC handler
-Step 3: Notification service + IPC handler
-Step 4: Favorites repository + IPC handler
-Step 5: Templates repository + IPC handler
-Step 6: Register all handlers in main.cjs
-Step 7: Update preload.cjs with new channels
-Step 8: Update ipc.js client
-Step 9: Create frontend hooks (useQuotas, useNotifications, useFavorites, useTemplates)
-Step 10: Create QuotaManager component
-Step 11: Create NotificationDisplay component + badge
-Step 12: Create FavoritesWidget component
-Step 13: Create TemplatesManager component
-Step 14: Update UpcomingResetsWidget with real data
-Step 15: Build verification + documentation updates
+Step 1: Add React Error Boundaries
+Step 2: Add Performance Monitoring Hook
+Step 3: Add Environment Configuration
+Step 4: Add Production Build Optimizations
+Step 5: Add Health Check Endpoint
+Step 6: Update documentation
+Step 7: Create Phase 20 plan
 ```
 
 ## 4.2 Key Design Decisions
 
-1. **Database migration required.** Four new tables must be created via inline migration in database.cjs (same pattern as Phase 14).
+1. **Use React Error Boundaries.** Native React solution for error handling.
 
-2. **Quota tracking is account/provider-level.** Quotas link to accounts or providers, not individual models.
+2. **Use web-vitals for performance monitoring.** Industry standard for Web Vitals.
 
-3. **Notifications are generated by services.** When a quota threshold is hit, when a backup completes, etc., the service creates a notification record.
+3. **Use environment variables for config.** Standard practice for Electron apps.
 
-4. **Favorites use unique constraint.** (entity_type, entity_id) prevents duplicate favorites.
-
-5. **Templates store config as JSON string.** Same pattern as the Master Blueprint specification.
+4. **Keep it simple.** Focus on essentials, avoid over-engineering.
 
 
 ================================================================================
 5. FILES TO CREATE
 ================================================================================
 
-## 5.1 Database
+## 5.1 Error Handling
 
-### Inline migration in electron/database.cjs
-- Add CREATE TABLE for quotas, favorites, templates, notifications
-- Add indexes for common queries
+### src/components/error-boundary/ErrorBoundary.jsx
+- Purpose: React error boundary component
+- Features: Fallback UI, error logging, retry mechanism
 
-## 5.2 Backend Files
+### src/components/error-boundary/ErrorFallback.jsx
+- Purpose: Fallback UI when error occurs
+- Features: User-friendly error message, retry button
 
-### electron/repositories/quota_repository.cjs
-- Purpose: CRUD for quotas, quota checking, reset logic
-- Methods: create, update, delete, getById, list, checkQuota, resetQuotas
+## 5.2 Performance Monitoring
 
-### electron/repositories/favorite_repository.cjs
-- Purpose: CRUD for favorites
-- Methods: add, remove, list, getByEntity, isFavorite
+### src/hooks/usePerformanceMonitoring.js
+- Purpose: Hook for tracking Web Vitals
+- Features: LCP, FID, CLS tracking
 
-### electron/repositories/template_repository.cjs
-- Purpose: CRUD for templates
-- Methods: create, update, delete, getById, list, createFromEntity
+### src/lib/performance.js
+- Purpose: Performance metrics collection
+- Features: Custom metrics, timing measurements
 
-### electron/repositories/notification_repository.cjs
-- Purpose: CRUD for notifications
-- Methods: create, list, markRead, markAllRead, getUnreadCount, delete
+## 5.3 Environment Configuration
 
-### electron/ipc/quotas.ipc.cjs
-- Purpose: IPC handlers for quota operations
-- Channels: quotas:create, quotas:update, quotas:delete, quotas:list, quotas:get, quotas:check, quotas:reset
+### src/lib/config.js
+- Purpose: Environment configuration
+- Features: API endpoints, feature flags, debug mode
 
-### electron/ipc/notifications.ipc.cjs
-- Purpose: IPC handlers for notification operations
-- Channels: notifications:list, notifications:unreadCount, notifications:markRead, notifications:markAllRead, notifications:delete
+## 5.4 Health Check
 
-### electron/ipc/favorites.ipc.cjs
-- Purpose: IPC handlers for favorites operations
-- Channels: favorites:add, favorites:remove, favorites:list, favorites:check
-
-### electron/ipc/templates.ipc.cjs
-- Purpose: IPC handlers for templates operations
-- Channels: templates:create, templates:update, templates:delete, templates:list, templates:get, templates:createEntity
-
-### electron/services/notification_service.cjs
-- Purpose: Generate notifications for system events
-- Methods: notify QuotaThreshold, notifyBackupComplete, notifyImportComplete, notifyKeyExpiring
-
-## 5.3 Frontend Files
-
-### src/hooks/use-quotas.js
-- Purpose: React Query hook for quota management
-
-### src/hooks/use-notifications.js
-- Purpose: React Query hook for notifications
-
-### src/hooks/use-favorites.js
-- Purpose: React Query hook for favorites
-
-### src/hooks/use-templates.js
-- Purpose: React Query hook for templates
-
-### src/components/features/quotas/quota-manager.jsx
-- Purpose: UI for managing quotas (create, edit, delete, view)
-
-### src/components/features/notifications/notification-display.jsx
-- Purpose: Notification list with badge, mark as read
-
-### src/components/features/notifications/notification-badge.jsx
-- Purpose: Unread count badge for sidebar/header
-
-### src/components/features/favorites/favorites-widget.jsx
-- Purpose: Display favorite entities
-
-### src/components/features/templates/template-manager.jsx
-- Purpose: UI for managing templates
-
-### src/components/features/quotas/index.js
-- Purpose: Barrel export
-
-### src/components/features/notifications/index.js
-- Purpose: Barrel export
-
-### src/components/features/favorites/index.js
-- Purpose: Barrel export
-
-### src/components/features/templates/index.js
-- Purpose: Barrel export
+### electron/health.cjs
+- Purpose: Application health check
+- Features: Database connectivity, version info
 
 
 ================================================================================
 6. FILES TO MODIFY
 ================================================================================
 
-### electron/database.cjs
-- Add inline migration for quotas, favorites, templates, notifications tables
+### src/App.jsx
+- Wrap routes with ErrorBoundary
 
-### electron/main.cjs
-- Register new IPC handlers for quotas, notifications, favorites, templates
-
-### electron/preload.cjs
-- Add new IPC channel bridges for quotas, notifications, favorites, templates
-
-### src/lib/ipc.js
-- Add new API methods for quotas, notifications, favorites, templates
-
-### src/components/dashboard/UpcomingResetsWidget.jsx
-- Replace hardcoded data with real quota data
-
-### src/components/Sidebar.jsx
-- Add notification badge (optional, depends on notification display location)
+### package.json
+- Add web-vitals dependency
 
 
 ================================================================================
-7. DATABASE CHANGES
+7. DEPENDENCIES TO ADD
 ================================================================================
 
-**Migration required.** Four new tables must be added via inline CREATE TABLE IF NOT EXISTS in database.cjs.
-
-### quotas table
-```sql
-CREATE TABLE IF NOT EXISTS quotas (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  entity_type TEXT NOT NULL,
-  entity_id INTEGER NOT NULL,
-  quota_type TEXT NOT NULL,
-  limit_value REAL NOT NULL,
-  current_value REAL NOT NULL DEFAULT 0,
-  reset_interval TEXT,
-  reset_day INTEGER,
-  last_reset TEXT,
-  next_reset TEXT,
-  created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_quotas_entity ON quotas(entity_type, entity_id);
-CREATE INDEX IF NOT EXISTS idx_quotas_type ON quotas(quota_type);
-```
-
-### favorites table
-```sql
-CREATE TABLE IF NOT EXISTS favorites (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  entity_type TEXT NOT NULL,
-  entity_id INTEGER NOT NULL,
-  sort_order INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT (datetime('now')),
-  UNIQUE(entity_type, entity_id)
-);
-CREATE INDEX IF NOT EXISTS idx_favorites_entity ON favorites(entity_type, entity_id);
-```
-
-### templates table
-```sql
-CREATE TABLE IF NOT EXISTS templates (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  entity_type TEXT NOT NULL,
-  config TEXT NOT NULL,
-  is_default INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now'))
-);
-```
-
-### notifications table
-```sql
-CREATE TABLE IF NOT EXISTS notifications (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  type TEXT NOT NULL,
-  title TEXT NOT NULL,
-  message TEXT,
-  entity_type TEXT,
-  entity_id INTEGER,
-  is_read INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(type);
-CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(is_read);
-```
+### web-vitals
+- Purpose: Web Vitals measurement
+- Version: Latest
 
 
 ================================================================================
-8. IPC/DATA FLOW
-================================================================================
+8. ACCEPTANCE CRITERIA
 
-## 8.1 Quota Flow
-```
-QuotaManager → useQuotas hook → ipc.quotas.list() → IPC → quotaRepository → DB
-Quota threshold hit → notificationService.notify() → notifications table → NotificationDisplay
-```
+### Error Handling
+- [ ] Error boundaries wrap each route
+- [ ] Fallback UI displays on errors
+- [ ] Errors are logged for debugging
 
-## 8.2 Notification Flow
-```
-Service event → notificationService.create() → notifications table
-NotificationDisplay → useNotifications hook → ipc.notifications.list() → IPC → notificationRepository → DB
-Mark read → ipc.notifications.markRead(id) → DB update
-```
+### Performance Monitoring
+- [ ] Web Vitals are tracked
+- [ ] Performance metrics are collected
+- [ ] Metrics can be sent to analytics
 
-## 8.3 Favorite Flow
-```
-Entity page → "Pin" button → useFavorites.add() → ipc.favorites.add() → IPC → favoriteRepository → DB
-Sidebar → useFavorites.list() → ipc.favorites.list() → IPC → favoriteRepository → DB
-```
-
-## 8.4 Template Flow
-```
-Entity page → "Save as Template" → useTemplates.create() → ipc.templates.create() → IPC → templateRepository → DB
-Create from template → useTemplates.createFromEntity() → ipc.templates.createEntity() → entity IPC → DB
-```
-
-
-================================================================================
-9. ACCEPTANCE CRITERIA
-================================================================================
-
-### Quotas
-- [ ] Quotas table created in database
-- [ ] Create/edit/delete quotas works
-- [ ] Quota tracking calculates usage from usage_logs
-- [ ] Reset logic works for daily/weekly/monthly intervals
-- [ ] UpcomingResetsWidget shows real quota data
-
-### Notifications
-- [ ] Notifications table created in database
-- [ ] Notifications generated for quota thresholds
-- [ ] Notification display shows list of notifications
-- [ ] Notification badge shows unread count
-- [ ] Mark as read works
-- [ ] Mark all as read works
-
-### Favorites
-- [ ] Favorites table created in database
-- [ ] Add/remove favorites works
-- [ ] Favorites list displays correctly
-- [ ] Unique constraint prevents duplicates
-
-### Templates
-- [ ] Templates table created in database
-- [ ] Create template from entity works
-- [ ] Create entity from template works
-- [ ] Edit/delete templates works
+### Environment Config
+- [ ] Environment-specific settings work
+- [ ] Feature flags can be toggled
+- [ ] Debug mode can be enabled
 
 ### Build
 - [ ] npm run build passes with 0 errors
+- [ ] npm run test passes with 0 failures
+- [ ] Application runs without crashes
+
+### Documentation
+- [ ] TASKS.md updated
+- [ ] Phase 20 plan created
 
 
 ================================================================================
-10. VERIFICATION PLAN
-================================================================================
+9. VERIFICATION PLAN
 
-### Build Verification
+### Error Boundary Verification
+```bash
+npm run dev
+```
+Expected: Error boundaries catch errors and display fallback UI
+
+### Performance Verification
 ```bash
 npm run build
 ```
-Expected: 0 errors
+Expected: Build completes, no performance regressions
 
-### Manual Verification Steps
-1. Open Dashboard → Verify UpcomingResetsWidget shows quota data
-2. Create a quota → Verify it saves and displays
-3. Trigger quota threshold → Verify notification appears
-4. Click notification badge → Verify notification list
-5. Mark notification as read → Verify badge count decreases
-6. Pin an entity as favorite → Verify it appears in favorites
-7. Unpin entity → Verify it disappears
-8. Create template from entity → Verify template saved
-9. Create entity from template → Verify entity created with template data
-
-### Documentation Updates
-- [ ] TASKS.md: Mark Phase 16 items complete
-- [ ] AGENT_RULES.md: Update Phase 16 status
-- [ ] AI_CODING_PLAYBOOK.md: Update Phase 16 status
-- [ ] CODE_REVIEW_CHECKLIST.md: Update Phase 16 status
-- [ ] NEXT_IMPLEMENT_PLAN.TXT: Mark COMPLETE, set next = Phase 17
+### Test Verification
+```bash
+npm run test
+```
+Expected: 0 failures
 
 
 ================================================================================
-11. EXPLICIT OUT OF SCOPE
-================================================================================
+10. EXPLICIT OUT OF SCOPE
 
-1. **Polish and animations** — Phase 17
-2. **Performance optimization** — Phase 17
-3. **Keyboard shortcuts additions** — Phase 17
-4. **Accessibility improvements** — Phase 17
-5. **Testing** — Phase 18
-6. **Saved searches** — May be deferred (not explicitly required by Master Blueprint Section 54)
-7. **Undo/Redo** — Explicitly v2.1 per Master Blueprint
+1. **Full APM integration** — Can be added later
+2. **External error services (Sentry)** — Optional, not required
+3. **Complex feature flag systems** — Keep it simple
+4. **Load testing** — Not required for this phase
 
 
 ================================================================================
-12. ORDERED IMPLEMENTATION CHECKLIST
-================================================================================
-
-- [ ] Step 1: Add database migration for quotas, favorites, templates, notifications tables
-- [ ] Step 2: Create quota repository (electron/repositories/quota_repository.cjs)
-- [ ] Step 3: Create notification repository (electron/repositories/notification_repository.cjs)
-- [ ] Step 4: Create favorite repository (electron/repositories/favorite_repository.cjs)
-- [ ] Step 5: Create template repository (electron/repositories/template_repository.cjs)
-- [ ] Step 6: Create notification service (electron/services/notification_service.cjs)
-- [ ] Step 7: Create quotas IPC handler (electron/ipc/quotas.ipc.cjs)
-- [ ] Step 8: Create notifications IPC handler (electron/ipc/notifications.ipc.cjs)
-- [ ] Step 9: Create favorites IPC handler (electron/ipc/favorites.ipc.cjs)
-- [ ] Step 10: Create templates IPC handler (electron/ipc/templates.ipc.cjs)
-- [ ] Step 11: Register all handlers in main.cjs
-- [ ] Step 12: Update preload.cjs with new channels
-- [ Step 13: Update ipc.js client
-- [ ] Step 14: Create useQuotas hook
-- [ ] Step 15: Create useNotifications hook
-- [ ] Step 16: Create useFavorites hook
-- [ ] Step 17: Create useTemplates hook
-- [ ] Step 18: Create QuotaManager component
-- [ ] Step 19: Create NotificationDisplay component
-- [ ] Step 20: Create NotificationBadge component
-- [ ] Step 21: Create FavoritesWidget component
-- [ ] Step 22: Create TemplateManager component
-- [ ] Step 23: Update UpcomingResetsWidget with real data
-- [ ] Step 24: Build verification
-- [ ] Step 25: Update documentation
-
-
-================================================================================
-NEXT PHASE: Phase 17 — Polish and Performance
+NEXT PHASE: Phase 20 — Documentation and Packaging
 ================================================================================
 
 PLAN STATUS: READY FOR IMPLEMENTATION
