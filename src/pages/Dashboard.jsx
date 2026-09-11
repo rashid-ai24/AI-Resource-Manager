@@ -1,3 +1,9 @@
+import { StatsWidget } from '../components/dashboard/StatsWidget';
+import { QuickActionsWidget } from '../components/dashboard/QuickActionsWidget';
+import { UsageChartWidget } from '../components/dashboard/UsageChartWidget';
+import { RecentActivityWidget } from '../components/dashboard/RecentActivityWidget';
+import { UpcomingResetsWidget } from '../components/dashboard/UpcomingResetsWidget';
+
 export default function Dashboard() {
   return (
     <div className="flex flex-col gap-6">
@@ -5,23 +11,21 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-sm text-muted-foreground">AI Resource Manager Overview</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 border rounded-lg">
-          <p className="text-sm text-muted-foreground">Total Agents</p>
-          <p className="text-2xl font-bold">0</p>
+
+      <StatsWidget />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <UsageChartWidget />
         </div>
-        <div className="p-4 border rounded-lg">
-          <p className="text-sm text-muted-foreground">Total Providers</p>
-          <p className="text-2xl font-bold">0</p>
+        <div>
+          <RecentActivityWidget />
         </div>
-        <div className="p-4 border rounded-lg">
-          <p className="text-sm text-muted-foreground">Total Models</p>
-          <p className="text-2xl font-bold">0</p>
-        </div>
-        <div className="p-4 border rounded-lg">
-          <p className="text-sm text-muted-foreground">Total Projects</p>
-          <p className="text-2xl font-bold">0</p>
-        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <QuickActionsWidget />
+        <UpcomingResetsWidget />
       </div>
     </div>
   );
