@@ -1,6 +1,15 @@
 const { ipcMain } = require('electron');
+const crypto = require('crypto');
 const repositories = require('../repositories/index.cjs');
 const { ApiKeyCreateSchema, ApiKeyUpdateSchema, ListFilterSchema } = require('../lib/validators.cjs');
+
+function hashKey(key) {
+  return crypto.createHash('sha256').update(key).digest('hex');
+}
+
+function getKeyPrefix(key) {
+  return key.substring(0, 8) + '...';
+}
 
 function registerApiKeyHandlers() {
   const repo = repositories.apiKeys;
@@ -32,7 +41,10 @@ function registerApiKeyHandlers() {
   ipcMain.handle('api-keys:create', async (event, data) => {
     try {
       const validated = ApiKeyCreateSchema.parse(data);
-      const apiKey = repo.create(validated);
+      const { key, ...keyData } = validated;
+      const key_hash = hashKey(key);
+      const key_prefix = getKeyPrefix(key);
+      const apiKey = repo.create({ ...keyData, key_hash, key_prefix });
       return { success: true, data: repo.findByIdWithRelations(apiKey.id) };
     } catch (error) {
       console.error('api-keys:create failed:', error);
@@ -43,7 +55,12 @@ function registerApiKeyHandlers() {
   ipcMain.handle('api-keys:update', async (event, id, data) => {
     try {
       const validated = ApiKeyUpdateSchema.parse(data);
-      repo.update(id, validated);
+      const { key, ...keyData } = validated;
+      if (key) {
+        keyData.key_hash = hashKey(key);
+        keyData.key_prefix = getKeyPrefix(key);
+      }
+      repo.update(id, keyData);
       const apiKey = repo.findByIdWithRelations(id);
       if (!apiKey) {
         return { success: false, error: 'API Key not found' };
