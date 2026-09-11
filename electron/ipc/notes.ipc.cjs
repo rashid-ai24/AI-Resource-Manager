@@ -33,7 +33,9 @@ function registerNoteHandlers() {
     try {
       const validated = NoteCreateSchema.parse(data);
       const note = repo.create(validated);
-      return { success: true, data: repo.findByIdWithRelations(note.id) };
+      const noteData = repo.findByIdWithRelations(note.id);
+      repositories.activity.log('note', note.id, note.title, 'created', '');
+      return { success: true, data: noteData };
     } catch (error) {
       console.error('notes:create failed:', error);
       return { success: false, error: error.message };
@@ -48,6 +50,7 @@ function registerNoteHandlers() {
       if (!note) {
         return { success: false, error: 'Note not found' };
       }
+      repositories.activity.log('note', id, note.title, 'updated', '');
       return { success: true, data: note };
     } catch (error) {
       console.error('notes:update failed:', error);
@@ -62,6 +65,7 @@ function registerNoteHandlers() {
         return { success: false, error: 'Note not found' };
       }
       repo.delete(id);
+      repositories.activity.log('note', id, note.title, 'deleted', '');
       return { success: true, data: { id } };
     } catch (error) {
       console.error('notes:delete failed:', error);

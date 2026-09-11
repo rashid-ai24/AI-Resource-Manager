@@ -7,6 +7,8 @@ const ProjectRepository = require('./project_repository.cjs');
 const NoteRepository = require('./note_repository.cjs');
 const TagRepository = require('./tag_repository.cjs');
 const SettingsRepository = require('./settings_repository.cjs');
+const ActivityRepository = require('./activity_repository.cjs');
+const UsageRepository = require('./usage_repository.cjs');
 
 const repositories = {
   agents: new AgentRepository(),
@@ -18,6 +20,8 @@ const repositories = {
   notes: new NoteRepository(),
   tags: new TagRepository(),
   settings: new SettingsRepository(),
+  activity: new ActivityRepository(),
+  usage: new UsageRepository(),
 };
 
 module.exports = repositories;

@@ -23,8 +23,8 @@
 | Phase 10: Core Entities | ✅ Completed | Providers, Models, Projects |
 | Phase 11: Agents | ✅ Completed | Agent management |
 | Phase 12: Accounts/API Keys | ✅ Completed | Account and API key management |
-| Phase 13: Search/Commands | ⏳ Pending | - |
-| Phase 14: Analytics | ⏳ Pending | - |
+| Phase 13: Search/Commands | ✅ Completed | Search, command palette, notes, tags |
+| Phase 14: Analytics | ✅ Complete | 2026-09-11 |
 | Phase 15: Settings/Backup | ⏳ Pending | - |
 | Phase 16: Quotas/Notifications | ⏳ Pending | - |
 | Phase 17: Polish | ⏳ Pending | - |

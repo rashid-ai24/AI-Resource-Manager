@@ -33,6 +33,7 @@ function registerAgentHandlers() {
     try {
       const validated = AgentCreateSchema.parse(data);
       const agent = repo.createWithRelations(validated);
+      repositories.activity.log('agent', agent.id, agent.name, 'created', '');
       return { success: true, data: agent };
     } catch (error) {
       console.error('agents:create failed:', error);
@@ -47,6 +48,7 @@ function registerAgentHandlers() {
       if (!agent) {
         return { success: false, error: 'Agent not found' };
       }
+      repositories.activity.log('agent', id, agent.name, 'updated', '');
       return { success: true, data: agent };
     } catch (error) {
       console.error('agents:update failed:', error);
@@ -61,6 +63,7 @@ function registerAgentHandlers() {
         return { success: false, error: 'Agent not found' };
       }
       repo.delete(id);
+      repositories.activity.log('agent', id, agent.name, 'deleted', '');
       return { success: true, data: { id } };
     } catch (error) {
       console.error('agents:delete failed:', error);

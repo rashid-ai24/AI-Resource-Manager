@@ -33,7 +33,9 @@ function registerAccountHandlers() {
     try {
       const validated = AccountCreateSchema.parse(data);
       const account = repo.create(validated);
-      return { success: true, data: repo.findByIdWithRelations(account.id) };
+      const accountData = repo.findByIdWithRelations(account.id);
+      repositories.activity.log('account', account.id, account.name, 'created', '');
+      return { success: true, data: accountData };
     } catch (error) {
       console.error('accounts:create failed:', error);
       return { success: false, error: error.message };
@@ -48,6 +50,7 @@ function registerAccountHandlers() {
       if (!account) {
         return { success: false, error: 'Account not found' };
       }
+      repositories.activity.log('account', id, account.name, 'updated', '');
       return { success: true, data: account };
     } catch (error) {
       console.error('accounts:update failed:', error);
@@ -62,6 +65,7 @@ function registerAccountHandlers() {
         return { success: false, error: 'Account not found' };
       }
       repo.delete(id);
+      repositories.activity.log('account', id, account.name, 'deleted', '');
       return { success: true, data: { id } };
     } catch (error) {
       console.error('accounts:delete failed:', error);

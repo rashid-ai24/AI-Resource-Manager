@@ -45,7 +45,9 @@ function registerApiKeyHandlers() {
       const key_hash = hashKey(key);
       const key_prefix = getKeyPrefix(key);
       const apiKey = repo.create({ ...keyData, key_hash, key_prefix });
-      return { success: true, data: repo.findByIdWithRelations(apiKey.id) };
+      const apiKeyData = repo.findByIdWithRelations(apiKey.id);
+      repositories.activity.log('api_key', apiKey.id, apiKeyData.name, 'created', '');
+      return { success: true, data: apiKeyData };
     } catch (error) {
       console.error('api-keys:create failed:', error);
       return { success: false, error: error.message };
@@ -65,6 +67,7 @@ function registerApiKeyHandlers() {
       if (!apiKey) {
         return { success: false, error: 'API Key not found' };
       }
+      repositories.activity.log('api_key', id, apiKey.name, 'updated', '');
       return { success: true, data: apiKey };
     } catch (error) {
       console.error('api-keys:update failed:', error);
@@ -79,6 +82,7 @@ function registerApiKeyHandlers() {
         return { success: false, error: 'API Key not found' };
       }
       repo.delete(id);
+      repositories.activity.log('api_key', id, apiKey.name, 'deleted', '');
       return { success: true, data: { id } };
     } catch (error) {
       console.error('api-keys:delete failed:', error);

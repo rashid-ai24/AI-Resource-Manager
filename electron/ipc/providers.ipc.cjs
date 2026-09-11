@@ -33,6 +33,7 @@ function registerProviderHandlers() {
     try {
       const validated = ProviderCreateSchema.parse(data);
       const provider = repo.create(validated);
+      repositories.activity.log('provider', provider.id, provider.name, 'created', '');
       return { success: true, data: provider };
     } catch (error) {
       console.error('providers:create failed:', error);
@@ -47,6 +48,7 @@ function registerProviderHandlers() {
       if (!provider) {
         return { success: false, error: 'Provider not found' };
       }
+      repositories.activity.log('provider', id, provider.name, 'updated', '');
       return { success: true, data: provider };
     } catch (error) {
       console.error('providers:update failed:', error);
@@ -61,6 +63,7 @@ function registerProviderHandlers() {
         return { success: false, error: 'Provider not found' };
       }
       repo.delete(id);
+      repositories.activity.log('provider', id, provider.name, 'deleted', '');
       return { success: true, data: { id } };
     } catch (error) {
       console.error('providers:delete failed:', error);

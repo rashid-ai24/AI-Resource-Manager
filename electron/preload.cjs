@@ -81,4 +81,19 @@ contextBridge.exposeInMainWorld('api', {
     version: () => ipcRenderer.invoke('app:version'),
     path: () => ipcRenderer.invoke('app:path'),
   },
+  activity: {
+    list: (filters) => ipcRenderer.invoke('activity:list', filters),
+    getByEntity: (entityType, entityId) => ipcRenderer.invoke('activity:getByEntity', entityType, entityId),
+    getRecent: (limit) => ipcRenderer.invoke('activity:getRecent', limit),
+    getStats: () => ipcRenderer.invoke('activity:getStats'),
+  },
+  analytics: {
+    usageOverTime: (timeRange, filters) => ipcRenderer.invoke('analytics:usageOverTime', timeRange, filters),
+    costOverTime: (timeRange, filters) => ipcRenderer.invoke('analytics:costOverTime', timeRange, filters),
+    costByProvider: (timeRange) => ipcRenderer.invoke('analytics:costByProvider', timeRange),
+    costByModel: (timeRange) => ipcRenderer.invoke('analytics:costByModel', timeRange),
+    costByProject: (timeRange) => ipcRenderer.invoke('analytics:costByProject', timeRange),
+    usageByModel: (timeRange) => ipcRenderer.invoke('analytics:usageByModel', timeRange),
+    tokenDistribution: (timeRange) => ipcRenderer.invoke('analytics:tokenDistribution', timeRange),
+  },
 });

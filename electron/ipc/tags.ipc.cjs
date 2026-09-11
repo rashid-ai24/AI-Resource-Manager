@@ -33,6 +33,7 @@ function registerTagHandlers() {
     try {
       const validated = TagCreateSchema.parse(data);
       const tag = repo.create(validated);
+      repositories.activity.log('tag', tag.id, tag.name, 'created', '');
       return { success: true, data: tag };
     } catch (error) {
       console.error('tags:create failed:', error);
@@ -47,6 +48,7 @@ function registerTagHandlers() {
       if (!tag) {
         return { success: false, error: 'Tag not found' };
       }
+      repositories.activity.log('tag', id, tag.name, 'updated', '');
       return { success: true, data: tag };
     } catch (error) {
       console.error('tags:update failed:', error);
@@ -61,6 +63,7 @@ function registerTagHandlers() {
         return { success: false, error: 'Tag not found' };
       }
       repo.delete(id);
+      repositories.activity.log('tag', id, tag.name, 'deleted', '');
       return { success: true, data: { id } };
     } catch (error) {
       console.error('tags:delete failed:', error);

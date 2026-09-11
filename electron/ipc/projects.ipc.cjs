@@ -33,6 +33,7 @@ function registerProjectHandlers() {
     try {
       const validated = ProjectCreateSchema.parse(data);
       const project = repo.create(validated);
+      repositories.activity.log('project', project.id, project.name, 'created', '');
       return { success: true, data: project };
     } catch (error) {
       console.error('projects:create failed:', error);
@@ -47,6 +48,7 @@ function registerProjectHandlers() {
       if (!project) {
         return { success: false, error: 'Project not found' };
       }
+      repositories.activity.log('project', id, project.name, 'updated', '');
       return { success: true, data: project };
     } catch (error) {
       console.error('projects:update failed:', error);
@@ -61,6 +63,7 @@ function registerProjectHandlers() {
         return { success: false, error: 'Project not found' };
       }
       repo.delete(id);
+      repositories.activity.log('project', id, project.name, 'deleted', '');
       return { success: true, data: { id } };
     } catch (error) {
       console.error('projects:delete failed:', error);

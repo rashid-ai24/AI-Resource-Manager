@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
-import { Moon, Sun, LayoutDashboard, Bot, Building2, Cpu, User, Key, FolderOpen, FileText, Tag, Settings, ChevronLeft, Search } from 'lucide-react';
+import { Moon, Sun, LayoutDashboard, Bot, Building2, Cpu, User, Key, FolderOpen, FileText, Tag, Settings, ChevronLeft, Search, BarChart3, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ThemeSwitcher } from './common/ThemeSwitcher';
@@ -15,6 +15,9 @@ const links = [
   { to: '/projects', label: 'Projects', icon: FolderOpen },
   { to: '/notes', label: 'Notes', icon: FileText },
   { to: '/tags', label: 'Tags', icon: Tag },
+  { to: '/search', label: 'Search', icon: Search },
+  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { to: '/activity', label: 'Activity', icon: Clock },
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 

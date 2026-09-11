@@ -33,7 +33,9 @@ function registerModelHandlers() {
     try {
       const validated = ModelCreateSchema.parse(data);
       const model = repo.create(validated);
-      return { success: true, data: repo.findByIdWithRelations(model.id) };
+      const modelData = repo.findByIdWithRelations(model.id);
+      repositories.activity.log('model', model.id, model.name, 'created', '');
+      return { success: true, data: modelData };
     } catch (error) {
       console.error('models:create failed:', error);
       return { success: false, error: error.message };
@@ -48,6 +50,7 @@ function registerModelHandlers() {
       if (!model) {
         return { success: false, error: 'Model not found' };
       }
+      repositories.activity.log('model', id, model.name, 'updated', '');
       return { success: true, data: model };
     } catch (error) {
       console.error('models:update failed:', error);
@@ -62,6 +65,7 @@ function registerModelHandlers() {
         return { success: false, error: 'Model not found' };
       }
       repo.delete(id);
+      repositories.activity.log('model', id, model.name, 'deleted', '');
       return { success: true, data: { id } };
     } catch (error) {
       console.error('models:delete failed:', error);

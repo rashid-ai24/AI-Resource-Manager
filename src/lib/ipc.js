@@ -274,6 +274,58 @@ export const appApi = {
   },
 };
 
+// Activity API
+export const activityApi = {
+  list: async (filters = {}) => {
+    const result = await api.activity.list(filters);
+    return handleResponse(result);
+  },
+  getByEntity: async (entityType, entityId) => {
+    const result = await api.activity.getByEntity(entityType, entityId);
+    return handleResponse(result);
+  },
+  getRecent: async (limit = 10) => {
+    const result = await api.activity.getRecent(limit);
+    return handleResponse(result);
+  },
+  getStats: async () => {
+    const result = await api.activity.getStats();
+    return handleResponse(result);
+  },
+};
+
+// Analytics API
+export const analyticsApi = {
+  usageOverTime: async (timeRange = 30, filters = {}) => {
+    const result = await api.analytics.usageOverTime(timeRange, filters);
+    return handleResponse(result);
+  },
+  costOverTime: async (timeRange = 30, filters = {}) => {
+    const result = await api.analytics.costOverTime(timeRange, filters);
+    return handleResponse(result);
+  },
+  costByProvider: async (timeRange = 30) => {
+    const result = await api.analytics.costByProvider(timeRange);
+    return handleResponse(result);
+  },
+  costByModel: async (timeRange = 30) => {
+    const result = await api.analytics.costByModel(timeRange);
+    return handleResponse(result);
+  },
+  costByProject: async (timeRange = 30) => {
+    const result = await api.analytics.costByProject(timeRange);
+    return handleResponse(result);
+  },
+  usageByModel: async (timeRange = 30) => {
+    const result = await api.analytics.usageByModel(timeRange);
+    return handleResponse(result);
+  },
+  tokenDistribution: async (timeRange = 30) => {
+    const result = await api.analytics.tokenDistribution(timeRange);
+    return handleResponse(result);
+  },
+};
+
 // Combined API export
 export const ipc = {
   agents: agentsApi,
@@ -288,6 +340,8 @@ export const ipc = {
   db: dbApi,
   window: windowApi,
   app: appApi,
+  activity: activityApi,
+  analytics: analyticsApi,
 };
 
 export default ipc;

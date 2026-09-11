@@ -1,92 +1,74 @@
-Phase 13: Search, Command Palette, Notes, Tags
-================================================
+Phase 14: Analytics and Activity
+==================================
 
-PLAN STATUS: READY FOR IMPLEMENTATION
+PLAN STATUS: COMPLETE — 2026-09-11
 
 
 ===============================================================================
 1. PHASE OVERVIEW
 ===============================================================================
 
-Phase Number: 13
-Phase Name: Search, Command Palette, Notes, Tags
-Objective: Implement global search, command palette, notes module, and tags module
+Phase Number: 14
+Phase Name: Analytics and Activity
+Objective: Implement analytics dashboard with usage/cost/performance charts, and activity tracking system
 Documentation Sources:
-  - TASKS.md (lines 361-388)
-  - IMPLEMENTATION_GUIDE.md (lines 951-1013)
+  - TASKS.md (lines 389-401)
+  - IMPLEMENTATION_GUIDE.md (lines 1014-1060)
   - AI_Resource_Manager_v2_Master_Blueprint.md
-    - Section 24: Notes (lines 2596-2634)
-    - Section 25: Tags (lines 2636-2672)
-    - Section 29: Search System (lines 2825-2884)
-    - Section 30: Command Palette (lines 2886-2948)
-    - Section 48: Keyboard Shortcuts (lines 3945-3957)
-  - AGENT_RULES.md (line 26)
-  - AI_CODING_PLAYBOOK.md (line 26)
-  - CODE_REVIEW_CHECKLIST.md (line 26)
+    - Section 28: Analytics (lines 2767-2821)
+    - Section 31.3: Sidebar Navigation (lines 2969-2991)
+  - AGENT_RULES.md (line 27)
+  - AI_CODING_PLAYBOOK.md (line 27)
+  - CODE_REVIEW_CHECKLIST.md (line 27)
 
 
 ===============================================================================
 2. CURRENT STATE
 ===============================================================================
 
-### Backend (Electron) — FULLY COMPLETE
+### Backend (Electron) — INCOMPLETE
 
-Notes:
-  - electron/ipc/notes.ipc.cjs — Full CRUD (list, get, create, update, delete)
-  - electron/repositories/note_repository.cjs — NoteRepository extends BaseRepository
-    with findAllWithRelations, findByIdWithRelations, search by agent_id/project_id
-  - electron/lib/validators.cjs — NoteCreateSchema, NoteUpdateSchema
-  - src/lib/form-schemas.js — NoteFormSchema + noteFormFields
-  - src/lib/ipc.js — notesApi with full CRUD
-  - electron/preload.cjs — notes bridge (lines 46-52)
-  - DB schema: notes table with id, title, content, agent_id, project_id, timestamps
+Activity:
+  - NO activity_logs table in database schema
+  - NO usage_logs table in database schema
+  - electron/ipc/activity.ipc.cjs — MISSING
+  - electron/repositories/activity_repository.cjs — MISSING
+  - No activity logging middleware or hooks in any repository
 
-Tags:
-  - electron/ipc/tags.ipc.cjs — Full CRUD + entity operations
-    (tags:getByEntity, tags:addToEntity, tags:removeFromEntity)
-  - electron/repositories/tag_repository.cjs — TagRepository extends BaseRepository
-    with findByEntity, addToEntity, removeFromEntity
-  - electron/lib/validators.cjs — TagCreateSchema, TagUpdateSchema
-  - src/lib/form-schemas.js — TagFormSchema + tagFormFields
-  - src/lib/ipc.js — tagsApi with full CRUD + entity ops
-  - electron/preload.cjs — tags bridge (lines 53-62)
-  - DB schema: tags table (id, name, color, created_at),
-    junction tables: agent_tags, project_tags, note_tags
+Analytics:
+  - electron/ipc/analytics.ipc.cjs — MISSING
+  - No analytics aggregation queries
+  - No IPC endpoints for chart data
 
-Search:
-  - NOTE: No dedicated search IPC endpoint exists. Search must be implemented
-    client-side by calling existing IPC endpoints with search filters.
-    Each repository already supports search via ListFilterSchema.search.
-
-Command Palette:
-  - src/stores/command-palette-store.js — Zustand store EXISTS with
-    isOpen, searchQuery, selectedCommand, openPalette, closePalette,
-    togglePalette, setSearchQuery, setSelectedCommand, clearSelection
+Database:
+  - src/database/migrations/001_initial_schema.sql — NO activity/usage tables
+  - Need new migration for activity_logs and usage_logs tables
 
 ### Frontend (React) — PARTIAL
 
-Notes:
-  - src/pages/Notes.jsx — Skeleton page exists with basic create dialog
-    but NO list fetching, NO edit/delete, NO dedicated hook
-  - src/hooks/use-notes.js — MISSING
-  - src/components/features/notes/ — MISSING (no list, card, detail, form, columns)
+Analytics:
+  - src/pages/Analytics.jsx — MISSING (route defined in Blueprint but not created)
+  - src/components/features/analytics/ — MISSING (no components)
+  - src/hooks/use-analytics.js — MISSING
+  - /analytics route — MISSING in App.jsx
+  - Analytics sidebar link — MISSING
 
-Tags:
-  - src/pages/Tags.jsx — MISSING (sidebar links to /tags but no page/route)
-  - src/hooks/use-tags.js — MISSING
-  - src/components/features/tags/ — MISSING
-  - /tags route — MISSING in App.jsx
+Activity:
+  - src/components/dashboard/RecentActivityWidget.jsx — EXISTS but uses mock data
+  - No dedicated activity history page
+  - No activity filtering
 
-Search:
-  - src/pages/Search.jsx — MISSING
-  - src/hooks/use-search.js — MISSING
-  - Search components — MISSING
-  - /search route — MISSING in App.jsx
-  - Search icon imported but unused in Sidebar.jsx
+Dashboard (already built, uses mock data):
+  - src/components/dashboard/UsageChartWidget.jsx — EXISTS with Recharts LineChart
+    but uses mock data (generateMockData function), not real IPC data
+  - src/components/dashboard/StatsWidget.jsx — EXISTS with real IPC data
+  - src/components/dashboard/QuickActionsWidget.jsx — EXISTS
+  - src/components/dashboard/UpcomingResetsWidget.jsx — EXISTS
 
-Command Palette:
-  - src/components/command-palette/ — MISSING (store exists, no UI)
-  - Keyboard shortcut (Cmd+K) wiring — NOT YET CONNECTED
+Recharts:
+  - Package already installed: "recharts": "^3.8.0"
+  - Already used in UsageChartWidget.jsx (LineChart, Line, XAxis, YAxis, etc.)
+  - Need to add: PieChart, BarChart, AreaChart, ScatterChart for analytics
 
 
 ===============================================================================
@@ -95,476 +77,618 @@ Command Palette:
 
 | Requirement                    | Source             | Status        | Gap                                      |
 |-------------------------------|--------------------|---------------|------------------------------------------|
-| Notes page                     | TASKS L378         | Skeleton only | Needs feature components, list, edit     |
-| Notes hook (useNotes)          | TASKS L380         | Missing        | Create from established pattern          |
-| Notes editor component         | TASKS L379         | Missing        | Create note-editor in feature module     |
-| Notes auto-save                | TASKS L381         | Missing        | Implement on blur + 30s idle             |
-| Notes list with relations      | Blueprint 24       | Missing        | Agent/project name display               |
-| Notes edit/delete              | Blueprint 24       | Missing        | Edit dialog + delete confirmation        |
-| Tags management page           | TASKS L384         | Missing        | Create Tags page + route                 |
-| Tags hook (useTags)            | TASKS L385         | Missing        | Create from established pattern          |
-| Entity tag assignment          | TASKS L386         | Partial        | IPC exists; no frontend for bulk assign  |
-| Tag filtering                  | TASKS L387         | Missing        | Filter entities by tag                   |
-| Search page                    | TASKS L364         | Missing        | Create Search page                       |
-| Global search engine           | TASKS L365         | Missing        | Client-side multi-entity search          |
-| Search results display         | TASKS L366         | Missing        | Grouped results by entity type           |
-| useSearch hook                 | TASKS L367         | Missing        | Create search hook                       |
-| Command Palette component      | TASKS L370         | Missing        | Store exists; no UI component            |
-| Command categories             | TASKS L371         | Missing        | Define nav/create/action commands        |
-| Cmd+K shortcut                 | TASKS L372         | Missing        | Wire existing store to keyboard shortcut |
-| Navigation commands            | Blueprint 30       | Missing        | Go-to-page commands                      |
-| Create commands                | Blueprint 30       | Missing        | Quick-create entities                    |
-| /tags route                    | App.jsx            | Missing        | Add route                                |
-| /search route                  | App.jsx            | Missing        | Add route                                |
-| Search sidebar link            | Sidebar.jsx        | Missing        | Add Search nav item                      |
+| Analytics page                | TASKS L390         | Missing        | Create Analytics page + route            |
+| usage-trends component        | TASKS L391         | Missing        | Create usage trends chart component      |
+| cost-analysis component       | TASKS L392         | Missing        | Create cost analysis chart component     |
+| model-performance component   | TASKS L393         | Missing        | Create model performance component       |
+| Recharts integration          | TASKS L394         | Partial        | Recharts installed; need new charts      |
+| Activity history display      | TASKS L396         | Missing        | Create activity history page/component   |
+| Activity logging backend      | TASKS L397         | Missing        | New tables + repository + IPC            |
+| Activity filtering            | TASKS L398         | Missing        | Filter by entity type, action, date      |
+| Usage trends chart            | Blueprint 28.2     | Missing        | Line chart: tokens over time             |
+| Cost analysis charts          | Blueprint 28.3     | Missing        | Line/pie/bar charts: cost breakdown      |
+| Model performance charts      | Blueprint 28.4     | Missing        | Bar/scatter/histogram charts             |
+| Analytics time ranges         | Blueprint 28.5     | Missing        | 7d, 30d, 90d, 1y, Custom                |
+| /analytics route              | App.jsx            | Missing        | Add route                                |
+| Analytics sidebar link        | Sidebar.jsx        | Missing        | Add Analytics nav item                   |
+| Real usage data               | Dashboard          | Mock data      | Replace mock with IPC data               |
 
 
 ===============================================================================
 4. IMPLEMENTATION STRATEGY
 ===============================================================================
 
-Split into 4 sub-features, implemented bottom-up (dependencies first):
+Split into 3 sub-features, implemented bottom-up (dependencies first):
 
-  Sub-feature A: Tags Module (backend complete, frontend missing)
-  Sub-feature B: Notes Module (backend complete, frontend partial)
-  Sub-feature C: Search System (no backend needed, client-side)
-  Sub-feature D: Command Palette (UI component + keyboard wiring)
+  Sub-feature A: Activity Backend + IPC (new tables, repository, IPC handler)
+  Sub-feature B: Analytics Backend + IPC (aggregation queries, IPC handler)
+  Sub-feature C: Analytics Frontend (page, chart components, hooks)
 
-Order: A → B → C → D
+Order: A → B → C
 
 Rationale:
-  - Tags is simplest (CRUD only, no editor complexity)
-  - Notes builds on tag patterns and adds editor
-  - Search depends on all entities existing (tags/notes complete first)
-  - Command palette depends on navigation + entity creation being available
+  - Activity backend must exist before analytics can query activity data
+  - Analytics backend provides aggregation endpoints for frontend charts
+  - Frontend depends on both backend subsystems being complete
+  - Dashboard mock data replaced as part of analytics frontend work
 
 
 ===============================================================================
 5. FILES TO CREATE
 ===============================================================================
 
-### 5A. Tags Module
+### 5A. Activity Backend
 
-  src/hooks/use-tags.js
-    Purpose: React Query hook for tag CRUD + entity assignment
-    Dependencies: src/lib/ipc.js (tagsApi), React Query
+  electron/migrations/002_activity_usage_tables.sql
+    Purpose: New tables for activity_logs and usage_logs
+    Tables:
+      activity_logs (id, entity_type, entity_id, entity_name, action, details, created_at)
+      usage_logs (id, agent_id, provider_id, model_id, project_id,
+                  input_tokens, output_tokens, cost, timestamp)
 
-  src/components/features/tags/tag-list.jsx
-    Purpose: Table/card list of tags with search
-    Dependencies: use-tags.js, PageHeader, EmptyState, GenericForm
+  electron/repositories/activity_repository.cjs
+    Purpose: Activity logging and querying
+    Dependencies: base_repository.cjs
+    Methods:
+      - log(entityType, entityId, entityName, action, details)
+      - findAllWithFilters(filters) — filter by entity_type, action, date range
+      - findByEntity(entityType, entityId)
+      - getRecent(limit)
+      - getStats() — count by entity type, action breakdown
 
-  src/components/features/tags/tag-card.jsx
-    Purpose: Single tag display card
-    Dependencies: Badge, CopyButton
+  electron/repositories/usage_repository.cjs
+    Purpose: Usage data storage and aggregation
+    Dependencies: base_repository.cjs
+    Methods:
+      - logUsage(data) — record token usage
+      - getUsageOverTime(timeRange, filters) — daily aggregation
+      - getCostOverTime(timeRange, filters) — daily cost aggregation
+      - getCostByProvider(timeRange)
+      - getCostByModel(timeRange)
+      - getCostByProject(timeRange)
+      - getUsageByModel(timeRange)
+      - getTokenDistribution(timeRange)
 
-  src/components/features/tags/tag-detail.jsx
-    Purpose: Tag detail view with assigned entities
-    Dependencies: use-tags.js, PageHeader, Tabs, tag-list
+  electron/ipc/activity.ipc.cjs
+    Purpose: IPC handlers for activity operations
+    Dependencies: activity_repository.cjs, validators.cjs
+    Channels:
+      - activity:list (filters)
+      - activity:getByEntity (entityType, entityId)
+      - activity:getRecent (limit)
+      - activity:getStats
 
-  src/components/features/tags/tag-form.jsx
-    Purpose: Create/edit tag dialog
-    Dependencies: GenericForm, TagFormSchema, tagFormFields
+  electron/ipc/analytics.ipc.cjs
+    Purpose: IPC handlers for analytics data
+    Dependencies: usage_repository.cjs
+    Channels:
+      - analytics:usageOverTime (timeRange, filters)
+      - analytics:costOverTime (timeRange, filters)
+      - analytics:costByProvider (timeRange)
+      - analytics:costByModel (timeRange)
+      - analytics:costByProject (timeRange)
+      - analytics:usageByModel (timeRange)
+      - analytics:tokenDistribution (timeRange)
 
-  src/components/features/tags/tag-columns.jsx
-    Purpose: DataTable column definitions for tags
-    Dependencies: Badge (for color), Link
+  electron/preload.cjs (MODIFY)
+    Purpose: Add activity and analytics bridges
+    Change: Add activity and analytics methods to window.api
 
-  src/components/features/tags/index.js
-    Purpose: Barrel export for all tag components
+  src/lib/ipc.js (MODIFY)
+    Purpose: Add activity and analytics API modules
+    Change: Add activityApi and analyticsApi exports
 
-### 5B. Notes Module
+### 5B. Analytics Frontend
 
-  src/hooks/use-notes.js
-    Purpose: React Query hook for note CRUD with agent/project relations
-    Dependencies: src/lib/ipc.js (notesApi), React Query
+  src/hooks/use-analytics.js
+    Purpose: React Query hooks for analytics data
+    Dependencies: src/lib/ipc.js (analyticsApi), React Query
+    Queries:
+      - useUsageOverTime(timeRange, filters)
+      - useCostOverTime(timeRange, filters)
+      - useCostByProvider(timeRange)
+      - useCostByModel(timeRange)
+      - useCostByProject(timeRange)
+      - useUsageByModel(timeRange)
 
-  src/components/features/notes/note-list.jsx
-    Purpose: List of notes with search, filter by agent/project
-    Dependencies: use-notes.js, PageHeader, EmptyState
+  src/hooks/use-activity.js
+    Purpose: React Query hooks for activity data
+    Dependencies: src/lib/ipc.js (activityApi), React Query
+    Queries:
+      - useActivity(filters)
+      - useRecentActivity(limit)
+      - useActivityStats
 
-  src/components/features/notes/note-card.jsx
-    Purpose: Single note display card
-    Dependencies: Badge (agent/project names)
+  src/components/features/analytics/usage-trends.jsx
+    Purpose: Usage trends line chart (tokens over time)
+    Dependencies: recharts (LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer)
+    Features:
+      - Time range selector (7d, 30d, 90d, 1y)
+      - Input vs Output tokens (stacked area or multi-line)
+      - By provider (multi-line, optional)
+      - By model (multi-line, optional)
+      - Responsive container
 
-  src/components/features/notes/note-detail.jsx
-    Purpose: Note detail with editor, edit/delete actions
-    Dependencies: use-notes.js, note-editor, PageHeader
+  src/components/features/analytics/cost-analysis.jsx
+    Purpose: Cost analysis charts
+    Dependencies: recharts (LineChart, PieChart, BarChart, Cell, Tooltip, Legend, ResponsiveContainer)
+    Features:
+      - Cost over time (line chart)
+      - Cost by provider (pie chart)
+      - Cost by model (bar chart)
+      - Cost by project (bar chart)
+      - Time range selector
 
-  src/components/features/notes/note-form.jsx
-    Purpose: Create/edit note dialog
-    Dependencies: GenericForm, NoteFormSchema, noteFormFields
+  src/components/features/analytics/model-performance.jsx
+    Purpose: Model performance charts
+    Dependencies: recharts (BarChart, ScatterChart, Bar, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer)
+    Features:
+      - Usage by model (bar chart)
+      - Cost efficiency (scatter plot: cost vs usage)
+      - Token distribution (histogram)
+      - Time range selector
 
-  src/components/features/notes/note-editor.jsx
-    Purpose: Markdown-based textarea editor with auto-save
-    Dependencies: use-notes.js, FormFieldRenderer (textarea)
+  src/components/features/analytics/index.js
+    Purpose: Barrel export for all analytics components
 
-  src/components/features/notes/note-columns.jsx
-    Purpose: DataTable column definitions for notes
-    Dependencies: Badge, Link
+  src/pages/Analytics.jsx
+    Purpose: Full analytics page with all chart sections
+    Dependencies: usage-trends, cost-analysis, model-performance, PageHeader
+    Features:
+      - PageHeader with "Analytics" title
+      - Time range selector (global)
+      - Usage trends section
+      - Cost analysis section
+      - Model performance section
+      - Loading/error states
 
-  src/components/features/notes/index.js
-    Purpose: Barrel export for all note components
+  src/components/features/activity/activity-list.jsx
+    Purpose: Activity history list with filtering
+    Dependencies: use-activity.js, PageHeader, EmptyState, LoadingPage, ErrorState
+    Features:
+      - PageHeader with "Activity" title
+      - Filter by entity type (agent, provider, model, etc.)
+      - Filter by action (created, updated, deleted)
+      - Filter by date range
+      - Activity cards with entity icon, action, timestamp
+      - Relative time display
+      - Empty state
+      - Loading skeleton
 
-### 5C. Search System
-
-  src/hooks/use-search.js
-    Purpose: Hook that calls existing IPC endpoints with search filters
-    Dependencies: src/lib/ipc.js (all entity APIs), React Query, debounce
-
-  src/components/search/search-input.jsx
-    Purpose: Global search input with debounce (150ms)
-    Dependencies: SearchInput from shared components, lucide-react Search
-
-  src/components/search/search-results.jsx
-    Purpose: Grouped search results display by entity type
-    Dependencies: Badge, Link, EmptyState
-
-  src/components/search/search-page.jsx (or src/pages/Search.jsx)
-    Purpose: Full-page search view
-    Dependencies: search-input, search-results, use-search
-
-  src/components/search/index.js
-    Purpose: Barrel export
-
-### 5D. Command Palette
-
-  src/components/command-palette/command-palette.jsx
-    Purpose: Modal command palette with search, navigation, create commands
-    Dependencies: command-palette-store (Zustand), Dialog, useNavigate
-
-  src/components/command-palette/command-list.jsx
-    Purpose: Filtered command list with keyboard navigation
-    Dependencies: command-palette-store
-
-  src/components/command-palette/command-item.jsx
-    Purpose: Single command row
+  src/components/features/activity/activity-item.jsx
+    Purpose: Single activity log entry
     Dependencies: lucide-react icons
+    Features:
+      - Entity type icon
+      - Entity name (clickable link)
+      - Action badge (created/updated/deleted)
+      - Details text (if any)
+      - Relative timestamp
+      - Click to navigate to entity
 
-  src/components/command-palette/index.js
+  src/components/features/activity/index.js
     Purpose: Barrel export
+
+  src/pages/Activity.jsx (NEW)
+    Purpose: Activity history page
+    Depends on: activity-list
 
 
 ===============================================================================
 6. FILES TO MODIFY
 ===============================================================================
 
-  src/pages/Notes.jsx
-    Why: Replace skeleton with feature module
-    Change: Import from features/notes, use note-list + note-form
-    Preserve: Existing create dialog functionality (refactor into note-form)
-
-  src/pages/Tags.jsx (NEW — create if missing)
-    Why: No page exists yet
-    Change: Create new page component
-    Follow: Pattern from Providers.jsx, Models.jsx
-
   src/App.jsx
     Why: Add missing routes
-    Change: Add /tags, /tags/:id, /search routes
+    Change: Add /analytics, /activity routes
     Preserve: All existing routes and imports
 
   src/components/Sidebar.jsx
-    Why: Add Search navigation link
-    Change: Add Search entry to links array
+    Why: Add Analytics navigation link
+    Change: Add Analytics entry to links array
     Preserve: Existing links order and icon imports
 
-  src/hooks/index.js (if barrel export exists)
-    Why: Export new hooks
-    Change: Add use-tags, use-notes, use-search exports
+  electron/preload.cjs
+    Why: Expose activity and analytics IPC bridges
+    Change: Add activity and analytics methods
+    Preserve: All existing bridges
+
+  src/lib/ipc.js
+    Why: Add activity and analytics API modules
+    Change: Add activityApi and analyticsApi exports
+    Preserve: All existing API modules
+
+  electron/ipc/agents.ipc.cjs
+    Why: Add activity logging on create/update/delete
+    Change: Call activityRepository.log() after mutations
+    Preserve: Existing IPC handler logic
+
+  electron/ipc/providers.ipc.cjs
+    Why: Add activity logging on create/update/delete
+    Change: Call activityRepository.log() after mutations
+    Preserve: Existing IPC handler logic
+
+  electron/ipc/models.ipc.cjs
+    Why: Add activity logging on create/update/delete
+    Change: Call activityRepository.log() after mutations
+    Preserve: Existing IPC handler logic
+
+  electron/ipc/projects.ipc.cjs
+    Why: Add activity logging on create/update/delete
+    Change: Call activityRepository.log() after mutations
+    Preserve: Existing IPC handler logic
+
+  electron/ipc/notes.ipc.cjs
+    Why: Add activity logging on create/update/delete
+    Change: Call activityRepository.log() after mutations
+    Preserve: Existing IPC handler logic
+
+  electron/ipc/tags.ipc.cjs
+    Why: Add activity logging on create/update/delete
+    Change: Call activityRepository.log() after mutations
+    Preserve: Existing IPC handler logic
+
+  electron/ipc/api-keys.ipc.cjs
+    Why: Add activity logging on create/update/delete
+    Change: Call activityRepository.log() after mutations
+    Preserve: Existing IPC handler logic
+
+  electron/ipc/accounts.ipc.cjs
+    Why: Add activity logging on create/update/delete
+    Change: Call activityRepository.log() after mutations
+    Preserve: Existing IPC handler logic
+
+  src/components/dashboard/UsageChartWidget.jsx
+    Why: Replace mock data with real IPC data
+    Change: Use useAnalytics hook instead of generateMockData
+    Preserve: Existing chart layout and styling
+
+  src/components/dashboard/RecentActivityWidget.jsx
+    Why: Replace mock data with real IPC data
+    Change: Use useRecentActivity hook instead of hardcoded data
+    Preserve: Existing component layout and styling
 
 
 ===============================================================================
 7. BACKEND / ELECTRON CHANGES
 ===============================================================================
 
-NONE. The backend is fully complete for Phase 13:
+### 7A. New Database Migration
 
-  Notes IPC:     electron/ipc/notes.ipc.cjs — CRUD complete
-  Notes Repo:    electron/repositories/note_repository.cjs — search + relations
-  Tags IPC:      electron/ipc/tags.ipc.cjs — CRUD + entity operations
-  Tags Repo:     electron/repositories/tag_repository.cjs — entity assignment
-  Validators:    electron/lib/validators.cjs — all schemas present
-  Preload:       electron/preload.cjs — notes + tags bridges present
-  IPC Client:    src/lib/ipc.js — notesApi + tagsApi present
-  Form Schemas:  src/lib/form-schemas.js — NoteFormSchema, TagFormSchema present
-  DB Schema:     src/database/migrations/001_initial_schema.sql — tables + junction tables present
+  electron/migrations/002_activity_usage_tables.sql
 
-No migration files needed. No new IPC handlers needed. No new repositories needed.
+  -- Activity Logs table
+  CREATE TABLE IF NOT EXISTS activity_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      entity_type TEXT NOT NULL,
+      entity_id INTEGER,
+      entity_name TEXT DEFAULT '',
+      action TEXT NOT NULL,
+      details TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now'))
+  );
+
+  -- Usage Logs table
+  CREATE TABLE IF NOT EXISTS usage_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      agent_id INTEGER,
+      provider_id INTEGER,
+      model_id INTEGER,
+      project_id INTEGER,
+      input_tokens INTEGER DEFAULT 0,
+      output_tokens INTEGER DEFAULT 0,
+      cost REAL DEFAULT 0,
+      timestamp TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE SET NULL,
+      FOREIGN KEY (provider_id) REFERENCES providers(id) ON DELETE SET NULL,
+      FOREIGN KEY (model_id) REFERENCES models(id) ON DELETE SET NULL,
+      FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL
+  );
+
+  -- Indexes
+  CREATE INDEX IF NOT EXISTS idx_activity_entity ON activity_logs(entity_type, entity_id);
+  CREATE INDEX IF NOT EXISTS idx_activity_action ON activity_logs(action);
+  CREATE INDEX IF NOT EXISTS idx_activity_created ON activity_logs(created_at);
+  CREATE INDEX IF NOT EXISTS idx_usage_agent ON usage_logs(agent_id);
+  CREATE INDEX IF NOT EXISTS idx_usage_provider ON usage_logs(provider_id);
+  CREATE INDEX IF NOT EXISTS idx_usage_model ON usage_logs(model_id);
+  CREATE INDEX IF NOT EXISTS idx_usage_project ON usage_logs(project_id);
+  CREATE INDEX IF NOT EXISTS idx_usage_timestamp ON usage_logs(timestamp);
+
+### 7B. New Repositories
+
+  electron/repositories/activity_repository.cjs
+    Pattern: Follow base_repository.cjs pattern
+    Extends: BaseRepository
+    Table: activity_logs
+    Methods:
+      - log(entityType, entityId, entityName, action, details) — INSERT
+      - findAllWithFilters({ entityType, action, startDate, endDate, limit, offset })
+        → SELECT with WHERE clauses for each filter
+      - findByEntity(entityType, entityId) → WHERE entity_type = ? AND entity_id = ?
+      - getRecent(limit) → ORDER BY created_at DESC LIMIT ?
+      - getStats() → SELECT COUNT by entity_type, COUNT by action
+      - deleteOlderThan(date) → DELETE WHERE created_at < ?
+
+  electron/repositories/usage_repository.cjs
+    Pattern: Follow base_repository.cjs pattern
+    Extends: BaseRepository
+    Table: usage_logs
+    Methods:
+      - logUsage({ agentId, providerId, modelId, projectId, inputTokens, outputTokens, cost })
+      - getUsageOverTime(timeRange, { agentId, providerId, modelId, projectId })
+        → SELECT date(timestamp), SUM(input_tokens), SUM(output_tokens)
+          GROUP BY date(timestamp) ORDER BY date
+      - getCostOverTime(timeRange, filters)
+        → SELECT date(timestamp), SUM(cost) GROUP BY date(timestamp)
+      - getCostByProvider(timeRange)
+        → SELECT provider.name, SUM(cost) JOIN providers GROUP BY provider_id
+      - getCostByModel(timeRange)
+        → SELECT model.name, SUM(cost) JOIN models GROUP BY model_id
+      - getCostByProject(timeRange)
+        → SELECT project.name, SUM(cost) JOIN projects GROUP BY project_id
+      - getUsageByModel(timeRange)
+        → SELECT model.name, SUM(input_tokens), SUM(output_tokens) JOIN models GROUP BY model_id
+      - getTokenDistribution(timeRange)
+        → SELECT input_tokens, output_tokens per record for histogram
+
+### 7C. New IPC Handlers
+
+  electron/ipc/activity.ipc.cjs
+    Pattern: Follow agents.ipc.cjs pattern
+    Channels:
+      - activity:list → activityRepository.findAllWithFilters(filters)
+      - activity:getByEntity → activityRepository.findByEntity(entityType, entityId)
+      - activity:getRecent → activityRepository.getRecent(limit)
+      - activity:getStats → activityRepository.getStats()
+
+  electron/ipc/analytics.ipc.cjs
+    Pattern: Follow agents.ipc.cjs pattern
+    Channels:
+      - analytics:usageOverTime → usageRepository.getUsageOverTime(timeRange, filters)
+      - analytics:costOverTime → usageRepository.getCostOverTime(timeRange, filters)
+      - analytics:costByProvider → usageRepository.getCostByProvider(timeRange)
+      - analytics:costByModel → usageRepository.getCostByModel(timeRange)
+      - analytics:costByProject → usageRepository.getCostByProject(timeRange)
+      - analytics:usageByModel → usageRepository.getUsageByModel(timeRange)
+      - analytics:tokenDistribution → usageRepository.getTokenDistribution(timeRange)
+
+### 7D. Preload Bridge Updates
+
+  electron/preload.cjs
+    Add to window.api:
+      activity: {
+        list: (filters) => ipcRenderer.invoke('activity:list', filters),
+        getByEntity: (entityType, entityId) => ipcRenderer.invoke('activity:getByEntity', entityType, entityId),
+        getRecent: (limit) => ipcRenderer.invoke('activity:getRecent', limit),
+        getStats: () => ipcRenderer.invoke('activity:getStats'),
+      },
+      analytics: {
+        usageOverTime: (timeRange, filters) => ipcRenderer.invoke('analytics:usageOverTime', timeRange, filters),
+        costOverTime: (timeRange, filters) => ipcRenderer.invoke('analytics:costOverTime', timeRange, filters),
+        costByProvider: (timeRange) => ipcRenderer.invoke('analytics:costByProvider', timeRange),
+        costByModel: (timeRange) => ipcRenderer.invoke('analytics:costByModel', timeRange),
+        costByProject: (timeRange) => ipcRenderer.invoke('analytics:costByProject', timeRange),
+        usageByModel: (timeRange) => ipcRenderer.invoke('analytics:usageByModel', timeRange),
+        tokenDistribution: (timeRange) => ipcRenderer.invoke('analytics:tokenDistribution', timeRange),
+      }
+
+### 7E. Activity Logging in Existing IPC Handlers
+
+  Each entity IPC handler (agents, providers, models, projects, notes, tags, api-keys, accounts)
+  gets activity logging added after successful mutations:
+
+  Pattern:
+    const activityRepo = require('../repositories/activity_repository.cjs');
+
+    // After successful create:
+    activityRepo.log('agent', result.id, result.name, 'created', '');
+
+    // After successful update:
+    activityRepo.log('agent', id, name, 'updated', '');
+
+    // After successful delete:
+    activityRepo.log('agent', id, name, 'deleted', '');
 
 
 ===============================================================================
 8. FRONTEND CHANGES — DETAILED
 ===============================================================================
 
-### 8A. Tags Module
+### 8A. Analytics Hooks
 
-  src/hooks/use-tags.js
-    Pattern: Follow use-agents.js structure exactly
-    Queries:
-      - useQuery(['tags'], () => api.tags.list(filters))
-      - useMutation for create/update/delete
-      - Invalidate ['tags'] on all mutations
-    Extra operations:
-      - useQuery(['tags', 'entity', entityType, entityId], () => api.tags.getByEntity(entityType, entityId))
-      - useMutation for addToEntity / removeFromEntity
-
-  src/components/features/tags/tag-list.jsx
-    Pattern: Follow agent-list.jsx / provider-list.jsx
-    Props: { onCreateTag }
-    Features:
-      - PageHeader with "Tags" title + "Add Tag" button
-      - Search input for filtering by name
-      - List of tag cards with color dots
-      - Empty state when no tags
-      - Loading skeleton
-
-  src/components/features/tags/tag-card.jsx
-    Pattern: Follow agent-card.jsx
-    Props: { tag, onEdit, onDelete }
-    Features:
-      - Tag name with color indicator
-      - Created date
-      - Click to navigate to detail
-
-  src/components/features/tags/tag-detail.jsx
-    Pattern: Follow agent-detail.jsx
-    Features:
-      - PageHeader with tag name + actions
-      - Tag info (name, color, created_at)
-      - Tabs: "All Entities" showing entities with this tag
-      - Edit/delete buttons
-      - Loading/error states
-
-  src/components/features/tags/tag-form.jsx
-    Pattern: Follow agent-form.jsx
-    Props: { open, onOpenChange, tag? }
-    Features:
-      - GenericForm with TagFormSchema
-      - Fields: name (text), color (color picker)
-      - Create/edit modes
-
-  src/components/features/tags/tag-columns.jsx
-    Pattern: Follow agent-columns.jsx
-    Columns:
-      - Name (with color dot)
-      - Created At
-      - Entity Count (count of assigned entities)
-      - Actions (edit, delete)
-
-### 8B. Notes Module
-
-  src/hooks/use-notes.js
-    Pattern: Follow use-agents.js
-    Queries:
-      - useQuery(['notes'], () => api.notes.list(filters))
-      - useQuery(['notes', id], () => api.notes.get(id))
-      - useMutation for create/update/delete
-      - Invalidate ['notes'] on all mutations
-
-  src/components/features/notes/note-list.jsx
-    Pattern: Follow agent-list.jsx
-    Features:
-      - PageHeader with "Notes" title + "Add Note" button
-      - Search input
-      - Filter by agent / project (autocomplete)
-      - List of note cards showing title, content preview, agent/project
-      - Empty state
-      - Loading skeleton
-
-  src/components/features/notes/note-card.jsx
-    Pattern: Follow agent-card.jsx
-    Props: { note }
-    Features:
-      - Title
-      - Content preview (first 100 chars)
-      - Agent name badge (if linked)
-      - Project name badge (if linked)
-      - Created/updated dates
-      - Click to navigate to detail
-
-  src/components/features/notes/note-detail.jsx
-    Pattern: Follow agent-detail.jsx
-    Features:
-      - PageHeader with note title + actions
-      - Note info (title, agent, project, created_at, updated_at)
-      - Note editor (textarea with markdown)
-      - Auto-save on blur (30s idle fallback)
-      - Edit/delete buttons
-      - Tag assignment section
-      - Loading/error states
-
-  src/components/features/notes/note-editor.jsx
-    Pattern: NEW (no existing pattern — textarea with auto-save)
-    Props: { note, onSave }
-    Features:
-      - FormFieldRenderer (textarea type) for content
-      - Auto-save on blur
-      - Auto-save after 30 seconds of idle
-      - Save indicator (saved/saving/unsaved)
-      - Debounced save
-
-  src/components/features/notes/note-form.jsx
-    Pattern: Follow agent-form.jsx
-    Props: { open, onOpenChange, note? }
-    Features:
-      - GenericForm with NoteFormSchema
-      - Fields: title (text), content (textarea), agent_id (autocomplete), project_id (autocomplete)
-      - Create/edit modes
-
-  src/components/features/notes/note-columns.jsx
-    Pattern: Follow agent-columns.jsx
-    Columns:
-      - Title
-      - Content (truncated)
-      - Agent (name badge)
-      - Project (name badge)
-      - Updated At
-      - Actions (edit, delete)
-
-### 8C. Search System
-
-  src/hooks/use-search.js
-    Pattern: NEW (no existing hook matches this exactly)
+  src/hooks/use-analytics.js
+    Pattern: Follow use-agents.js structure
     Implementation:
-      - useQuery(['search', query] calling multiple IPC endpoints
-      - Calls: api.agents.list({search: q}), api.providers.list({search: q}),
-        api.models.list({search: q}), api.accounts.list({search: q}),
-        api.apiKeys.list({search: q}), api.projects.list({search: q}),
-        api.notes.list({search: q}), api.tags.list({search: q})
-      - Promise.allSettled for resilience (one entity type failing doesn't break search)
-      - Groups results by entity type
-      - Returns { results: [{type, items}], isLoading, error }
-    Dependencies: src/lib/ipc.js (all entity APIs), React Query
+      - useUsageOverTime(timeRange, filters) — useQuery calling analyticsApi.usageOverTime
+      - useCostOverTime(timeRange, filters) — useQuery calling analyticsApi.costOverTime
+      - useCostByProvider(timeRange) — useQuery calling analyticsApi.costByProvider
+      - useCostByModel(timeRange) — useQuery calling analyticsApi.costByModel
+      - useCostByProject(timeRange) — useQuery calling analyticsApi.costByProject
+      - useUsageByModel(timeRange) — useQuery calling analyticsApi.usageByModel
+    Query keys: ['analytics', 'usage', timeRange, filters]
+    Stale time: 60 seconds (data changes infrequently)
 
-  src/components/search/search-input.jsx
-    Pattern: NEW (similar to SearchEntry in shared components)
-    Props: { value, onChange, placeholder }
-    Features:
-      - Input with Search icon
-      - 150ms debounce on onChange
-      - Escape to clear
-      - Focus on mount (Ctrl+F / Cmd+F)
+  src/hooks/use-activity.js
+    Pattern: Follow use-agents.js
+    Implementation:
+      - useActivity(filters) — useQuery calling activityApi.list
+      - useRecentActivity(limit) — useQuery calling activityApi.getRecent
+      - useActivityStats — useQuery calling activityApi.getStats
+    Query keys: ['activity', filters], ['activity', 'recent', limit], ['activity', 'stats']
 
-  src/components/search/search-results.jsx
-    Pattern: NEW
-    Props: { results, isLoading, query }
+### 8B. Analytics Components
+
+  src/components/features/analytics/usage-trends.jsx
+    Pattern: Follow UsageChartWidget.jsx pattern (already uses Recharts)
+    Props: { timeRange }
     Features:
-      - Grouped by entity type (Agents, Providers, Models, etc.)
-      - Each group has header + list of items
-      - Each item shows name + relevant fields
-      - Click to navigate to entity detail
-      - Empty state: "No results for '{query}'"
+      - Uses useUsageOverTime(timeRange) hook
+      - ResponsiveContainer with LineChart
+      - XAxis (date), YAxis (tokens)
+      - CartesianGrid (strokeDasharray)
+      - Tooltip (styled like UsageChartWidget)
+      - Legend
+      - Line for inputTokens (blue)
+      - Line for outputTokens (green)
+      - Empty state when no data
       - Loading skeleton
 
-  src/pages/Search.jsx
+  src/components/features/analytics/cost-analysis.jsx
+    Pattern: NEW (multiple chart types)
+    Props: { timeRange }
+    Features:
+      - Uses useCostOverTime, useCostByProvider, useCostByModel, useCostByProject hooks
+      - 2x2 grid layout:
+        - Cost over time: LineChart (same pattern as usage-trends)
+        - Cost by provider: PieChart with colors
+        - Cost by model: BarChart
+        - Cost by project: BarChart
+      - Each chart in a Card with title
+      - Responsive containers
+      - Empty states per chart
+      - Loading skeletons
+
+  src/components/features/analytics/model-performance.jsx
+    Pattern: NEW
+    Props: { timeRange }
+    Features:
+      - Uses useUsageByModel hook
+      - 2 charts:
+        - Usage by model: BarChart (horizontal bars)
+        - Cost efficiency: ScatterChart (x=cost, y=usage)
+      - Each chart in a Card
+      - Responsive containers
+      - Empty states
+      - Loading skeletons
+
+  src/components/features/analytics/index.js
+    export { UsageTrends } from './usage-trends';
+    export { CostAnalysis } from './cost-analysis';
+    export { ModelPerformance } from './model-performance';
+
+### 8C. Activity Components
+
+  src/components/features/activity/activity-item.jsx
+    Pattern: Follow RecentActivityWidget.jsx pattern
+    Props: { activity }
+    Features:
+      - Entity type icon (Bot, Server, Cpu, FolderOpen, FileText, Tag, Key, User)
+      - Entity name (clickable, navigates to entity detail)
+      - Action badge: created (success), updated (default), deleted (destructive)
+      - Details text (if provided)
+      - Relative timestamp (formatRelativeTime from RecentActivityWidget)
+      - Click handler for navigation
+
+  src/components/features/activity/activity-list.jsx
+    Pattern: Follow agent-list.jsx
+    Props: { filters, onFiltersChange }
+    Features:
+      - PageHeader with "Activity" title
+      - Filter row:
+        - Entity type dropdown (All, Agent, Provider, Model, etc.)
+        - Action dropdown (All, Created, Updated, Deleted)
+        - Date range (start/end date inputs)
+      - List of activity-item components
+      - Empty state when no activity
+      - Loading skeleton
+      - Pagination (if needed)
+
+  src/components/features/activity/index.js
+    export { ActivityList } from './activity-list';
+    export { ActivityItem } from './activity-item';
+
+### 8D. Analytics Page
+
+  src/pages/Analytics.jsx
+    Pattern: Follow Dashboard.jsx layout
+    Features:
+      - PageHeader with "Analytics" title + description
+      - Time range selector (7d, 30d, 90d, 1y) — local state
+      - UsageTrends section
+      - CostAnalysis section
+      - ModelPerformance section
+      - Each section in a grid/card layout
+      - Loading states during initial fetch
+      - Error states with retry
+
+### 8E. Activity Page
+
+  src/pages/Activity.jsx (NEW)
     Pattern: Follow Agents.jsx / Providers.jsx
     Features:
-      - PageHeader with "Search" title
-      - SearchInput at top
-      - SearchResults below
-      - URL query param sync (?q=...)
-      - Keyboard navigation (arrow keys + Enter)
+      - ActivityList component
+      - No create dialog (activity is read-only)
+      - PageHeader with "Activity" title
 
-### 8D. Command Palette
+### 8F. Dashboard Updates
 
-  src/components/command-palette/command-palette.jsx
-    Pattern: Follow ConfirmDialog pattern (modal Dialog)
-    Features:
-      - Dialog triggered by Cmd+K / Ctrl+K
-      - SearchInput at top
-      - CommandList below
-      - Categories: Navigation, Create, Actions
-      - Keyboard navigation (arrow keys, Enter, Escape)
-      - Closes on selection or Escape
+  src/components/dashboard/UsageChartWidget.jsx
+    Why: Replace mock data with real data
+    Change:
+      - Import useUsageOverTime from analytics hooks
+      - Replace generateMockData with hook data
+      - Keep existing chart layout and styling
+      - Add timeRange prop support
+    Preserve: All existing Recharts imports and chart configuration
 
-  src/components/command-palette/command-list.jsx
-    Props: { commands, onSelect }
-    Features:
-      - Filtered by search query
-      - Grouped by category
-      - Keyboard navigation (arrow up/down)
-      - Selected item highlighted
-
-  src/components/command-palette/command-item.jsx
-    Props: { command, isSelected, onSelect }
-    Features:
-      - Icon + label + shortcut
-      - Click to execute
-      - Hover highlight
-
-  Command definitions (static, inside command-palette.jsx):
-    Navigation:
-      - Dashboard (/)
-      - Agents (/agents)
-      - Providers (/providers)
-      - Models (/models)
-      - Accounts (/accounts)
-      - API Keys (/api-keys)
-      - Projects (/projects)
-      - Notes (/notes)
-      - Tags (/tags)
-      - Settings (/settings)
-    Create:
-      - New Agent (open agent create dialog)
-      - New Provider (open provider create dialog)
-      - New Model (open model create dialog)
-      - New Project (open project create dialog)
-      - New Note (open note create dialog)
-      - New Tag (open tag create dialog)
-    Actions:
-      - Search (navigate to /search)
-      - Backup (Phase 15 — placeholder)
-      - Import (Phase 15 — placeholder)
-      - Export (Phase 15 — placeholder)
+  src/components/dashboard/RecentActivityWidget.jsx
+    Why: Replace mock data with real data
+    Change:
+      - Import useRecentActivity from activity hooks
+      - Replace hardcoded activity data with hook data
+      - Keep existing component layout
+      - Add "View All Activity" navigation to /activity
+    Preserve: All existing styling and formatting functions
 
 
 ===============================================================================
 9. DATA FLOW
 ===============================================================================
 
-### Search Flow
+### Activity Flow
 
-  User types in SearchInput
-    → 150ms debounce
-    → useSearch hook fires Promise.allSettled across all entity APIs
-    → Each IPC call: api.{entity}.list({search: query})
-    → Renderer IPC client → preload bridge → IPC handler
-    → Repository search() method (LIKE query)
-    → Results grouped by entity type
-    → SearchResults renders grouped display
+  Entity CRUD (e.g., create agent)
+    → IPC handler calls activityRepository.log('agent', id, name, 'created', '')
+    → INSERT INTO activity_logs
+    → Activity page / RecentActivityWidget queries activity:list
+    → activityRepository.findAllWithFilters()
+    → SELECT with WHERE clauses
+    → Returns filtered activity list
 
-### Notes Flow
+### Analytics Flow
 
-  Notes Page → useNotes hook → api.notes.list(filters)
-    → IPC → NoteRepository.findAllWithRelations()
-    → Joins agent/project names
-    → Returns notes with relation names
+  Analytics page loads
+    → useUsageOverTime(30) fires
+    → analyticsApi.usageOverTime(30, {})
+    → IPC → usageRepository.getUsageOverTime(30, {})
+    → SELECT date(timestamp), SUM(input_tokens), SUM(output_tokens)
+      FROM usage_logs
+      WHERE timestamp >= date('now', '-30 days')
+      GROUP BY date(timestamp)
+      ORDER BY date
+    → Returns [{date, inputTokens, outputTokens}, ...]
+    → UsageTrends renders LineChart
 
-  Note Editor → auto-save → useNotes.update mutation
-    → api.notes.update(id, {content})
-    → IPC → NoteRepository.update()
+  Cost analysis loads
+    → useCostByProvider(30) fires
+    → analyticsApi.costByProvider(30)
+    → IPC → usageRepository.getCostByProvider(30)
+    → SELECT p.name, SUM(u.cost)
+      FROM usage_logs u
+      JOIN providers p ON u.provider_id = p.id
+      WHERE u.timestamp >= date('now', '-30 days')
+      GROUP BY u.provider_id
+    → Returns [{name, cost}, ...]
+    → CostAnalysis renders PieChart
 
-### Tags Flow
+### Dashboard Flow
 
-  Tags Page → useTags hook → api.tags.list()
-    → IPC → TagRepository.findAll()
-    → Returns all tags
-
-  Entity Detail → tag assignment → useTags.addToEntity mutation
-    → api.tags.addToEntity(entityType, entityId, tagId)
-    → IPC → TagRepository.addToEntity()
-    → Invalidates entity query
-
-### Command Palette Flow
-
-  User presses Cmd+K
-    → useKeyboardShortcuts triggers command-palette-store.togglePalette()
-    → command-palette-store sets isOpen=true
-    → command-palette Dialog opens
-    → User types to filter commands
-    → User selects command (Enter/click)
-    → Command action executes (navigate / open dialog)
-    → Palette closes
+  Dashboard loads
+    → UsageChartWidget calls useUsageOverTime(30)
+    → Real data from IPC (replaces mock)
+    → RecentActivityWidget calls useRecentActivity(5)
+    → Real data from IPC (replaces mock)
 
 
 ===============================================================================
@@ -572,64 +696,64 @@ No migration files needed. No new IPC handlers needed. No new repositories neede
 ===============================================================================
 
 ### Validation
-  - Tag form: TagFormSchema (name required, 1-50 chars, unique; color optional)
-  - Note form: NoteFormSchema (title optional, 200 chars; content optional, 50000 chars)
-  - Search: No validation needed (free text, debounced)
+  - Time range: 7, 30, 90, 365 (integer, days)
+  - Activity filters: entityType (string), action (string), dateRange (ISO strings)
+  - Usage log: agentId/providerId/modelId (optional integers), tokens (integers >= 0), cost (number >= 0)
 
 ### Error Handling
   - All hooks return { data, isLoading, error } from React Query
-  - Components show ErrorState on error
-  - Components show EmptyState when no data
-  - Components show LoadingState/skeleton during load
-  - Search uses Promise.allSettled — partial failures don't break results
+  - Charts show empty state when no data (not error)
+  - Charts show loading skeleton during fetch
+  - Activity list shows EmptyState when no logs
+  - ErrorState with retry on API failures
+  - Activity logging failures are silent (don't break CRUD operations)
 
 ### Cache Invalidation
-  - Tag mutations invalidate ['tags'] query key
-  - Note mutations invalidate ['notes'] query key
-  - Tag assignment invalidates both ['tags'] and entity query key
-  - Search does not cache (real-time query)
+  - Activity queries: staleTime 30 seconds
+  - Analytics queries: staleTime 60 seconds
+  - CRUD mutations trigger activity log → activity list auto-refreshes
+  - Dashboard queries: staleTime 60 seconds (after mock removal)
 
-### Confirmation Dialogs
-  - Delete tag: ConfirmDialog before deletion
-  - Delete note: ConfirmDialog before deletion
-  - Unsaved note changes: confirm before navigating away
+### Activity Logging Strategy
+  - Activity is logged AFTER successful mutations (not before)
+  - Logging failures are caught and logged to console (non-blocking)
+  - No activity logging for read operations (list, get)
+  - Entity name stored for display (avoids joins for recent activity)
 
 
 ===============================================================================
 11. ACCEPTANCE CRITERIA
 ===============================================================================
 
-From TASKS.md lines 361-388 and IMPLEMENTATION_GUIDE.md lines 984-989:
+From TASKS.md lines 389-401 and IMPLEMENTATION_GUIDE.md lines 1046-1050:
 
-  [ ] Search works across all entities (agents, providers, models, accounts,
-      api_keys, projects, notes, tags)
-  [ ] Command palette opens with Cmd+K / Ctrl+K
-  [ ] Command palette navigates to pages
-  [ ] Command palette creates entities (opens create dialogs)
-  [ ] Notes can be created/edited
-  [ ] Notes list shows agent/project relations
-  [ ] Notes auto-save on blur
-  [ ] Tags can be created
-  [ ] Tags can be assigned to entities
-  [ ] Tags can be filtered
-  [ ] Tag management page exists with CRUD
-  [ ] /tags and /tags/:id routes work
-  [ ] /search route works
+  [ ] Analytics page exists with route /analytics
+  [ ] Usage trends chart works with real data
+  [ ] Cost analysis charts work (line, pie, bar)
+  [ ] Model performance charts work (bar, scatter)
+  [ ] Time range selector works (7d, 30d, 90d, 1y)
+  [ ] Activity history displays with filtering
+  [ ] Activity logging automatic on entity CRUD
+  [ ] Dashboard uses real data (not mock)
+  [ ] /analytics route works
+  [ ] Sidebar has Analytics link
   [ ] Build passes without errors
 
 From Master Blueprint:
 
-  [ ] Search: fuzzy matching tolerant of typos (client-side LIKE)
-  [ ] Search: multi-entity across all 8 entity types
-  [ ] Search: grouped results by entity type
-  [ ] Search: keyboard navigation (arrow keys + Enter)
-  [ ] Command Palette: quick navigation to any page
-  [ ] Command Palette: entity creation shortcuts
-  [ ] Command Palette: global Cmd+K shortcut
-  [ ] Notes: polymorphic attachment (agent_id OR project_id)
-  [ ] Notes: title + content fields
-  [ ] Tags: name (unique) + color
-  [ ] Tags: entity assignment via junction tables
+  [ ] Usage trends: token usage over time (line chart)
+  [ ] Usage trends: input vs output tokens (stacked area or multi-line)
+  [ ] Cost analysis: cost over time (line chart)
+  [ ] Cost analysis: cost by provider (pie chart)
+  [ ] Cost analysis: cost by model (bar chart)
+  [ ] Cost analysis: cost by project (bar chart)
+  [ ] Model performance: usage by model (bar chart)
+  [ ] Model performance: cost efficiency (scatter plot)
+  [ ] Time ranges: 7d, 30d, 90d, 1y
+  [ ] Activity: entity type filter
+  [ ] Activity: action filter (created/updated/deleted)
+  [ ] Activity: date range filter
+  [ ] Activity: relative timestamps
 
 
 ===============================================================================
@@ -642,41 +766,41 @@ From Master Blueprint:
   - Warnings acceptable (chunk size, vite config)
 
 ### Routing Verification
-  - /tags renders Tags page
-  - /tags/:id renders Tag detail
-  - /notes renders Notes page
-  - /search renders Search page
-  - Sidebar links work for all
+  - /analytics renders Analytics page
+  - /activity renders Activity page
+  - Sidebar links work for both
 
-### CRUD Verification
-  - Tags: create, edit, delete, list, detail
-  - Notes: create, edit, delete, list, detail
-  - Both show loading/empty/error states
+### Analytics Verification
+  - Time range selector changes all charts
+  - Usage trends chart renders with data
+  - Cost analysis charts render with data
+  - Model performance charts render with data
+  - Empty states show when no data
+  - Loading states show during fetch
 
-### Search Verification
-  - Type query → results appear grouped by entity type
-  - Click result → navigates to entity detail
-  - Empty query → no results shown
-  - No results → "No results" message
+### Activity Verification
+  - Activity list shows entries after entity CRUD
+  - Filter by entity type works
+  - Filter by action works
+  - Filter by date range works
+  - Click entity navigates to detail
+  - Relative timestamps display correctly
 
-### Command Palette Verification
-  - Cmd+K opens palette
-  - Escape closes palette
-  - Arrow keys navigate commands
-  - Enter selects command
-  - Navigation commands go to correct pages
-  - Create commands open correct dialogs
+### Dashboard Verification
+  - UsageChartWidget shows real data (not mock)
+  - RecentActivityWidget shows real data (not mock)
+  - Both update after entity changes
 
-### Tag Assignment Verification
-  - Assign tag to entity from entity detail page
-  - Remove tag from entity
-  - Tag appears on entity detail
-  - Entity appears in tag detail
+### CRUD + Activity Logging Verification
+  - Create agent → activity log entry appears
+  - Update agent → activity log entry appears
+  - Delete agent → activity log entry appears
+  - Same for providers, models, projects, notes, tags, accounts, api-keys
 
-### Auto-Save Verification
-  - Edit note content → blur → saves automatically
-  - Edit note → wait 30s → saves automatically
-  - Save indicator shows "saved" state
+### Performance Verification
+  - Charts render without lag
+  - Activity list loads quickly
+  - No unnecessary re-renders
 
 
 ===============================================================================
@@ -686,110 +810,118 @@ From Master Blueprint:
 After implementation, update:
 
   TASKS.md
-    - Mark all Phase 13 items as [x] complete
+    - Mark all Phase 14 items as [x] complete
 
   AGENT_RULES.md
-    - Update line 26: Phase 13 status from "⏳ Pending" to "✅ Completed"
+    - Update line 27: Phase 14 status from "⏳ Pending" to "✅ Completed"
 
   AI_CODING_PLAYBOOK.md
-    - Update line 26: Phase 13 status from "⏳ Pending" to "✅ Completed"
+    - Update line 27: Phase 14 status from "⏳ Pending" to "✅ Completed"
 
   CODE_REVIEW_CHECKLIST.md
-    - Update line 26: Phase 13 status from "⏳ Pending" to "✅ Completed"
+    - Update line 27: Phase 14 status from "⏳ Pending" to "✅ Completed"
 
   NEXT_IMPLEMENT_PLAN.TXT
-    - Update to show Phase 13 complete
-    - Set next phase to Phase 14: Analytics and Activity
+    - Update to show Phase 14 complete
+    - Set next phase to Phase 15: Settings, Backup, Import/Export
 
 
 ===============================================================================
 14. EXPLICIT OUT OF SCOPE
 ===============================================================================
 
-The following are NOT part of Phase 13 and must NOT be implemented:
+The following are NOT part of Phase 14 and must NOT be implemented:
 
-  - DataTable system (Phase 5 Shared Components — not yet built but separate)
+  - Settings page (Phase 15)
+  - Backup/Import/Export (Phase 15)
+  - Notification service (Phase 15)
+  - Saved searches (Phase 16)
   - Virtualization for large lists (Phase 17)
   - Rich text / Markdown rendering (Phase 17 polish)
   - Note version history (Master Blueprint says "optional, v2.1")
   - Note file attachments (Master Blueprint says "v2.1")
-  - Saved searches (Phase 16)
-  - Notification service (Phase 15)
-  - Backup/Import/Export (Phase 15)
-  - Settings page (Phase 15)
-  - Analytics/charts (Phase 14)
-  - Activity logging (Phase 14)
   - Performance optimization (Phase 17)
   - Accessibility audit (Phase 17)
   - Unit/integration/E2E tests (Phase 18)
-  - Any new database migrations (backend is complete)
-  - Any new IPC handlers (backend is complete)
-  - Any new repositories (backend is complete)
+  - Advanced analytics (v2.1 — more charts, ML insights)
+  - Real-time usage tracking (requires external integration)
+  - Cost forecasting beyond trend lines
+  - Custom date range picker (use preset ranges only)
+  - Chart export (PNG/PDF)
+  - Dashboard widget rearrangement
+  - Any changes to existing CRUD functionality
+  - Any changes to API-key security
+  - Any changes to existing IPC architecture
 
 
 ===============================================================================
 15. IMPLEMENTATION ORDER / CHECKLIST
 ===============================================================================
 
-Step 1: Tags Module
-  [ ] 1.1  Create src/hooks/use-tags.js
-  [ ] 1.2  Create src/components/features/tags/tag-columns.jsx
-  [ ] 1.3  Create src/components/features/tags/tag-card.jsx
-  [ ] 1.4  Create src/components/features/tags/tag-form.jsx
-  [ ] 1.5  Create src/components/features/tags/tag-list.jsx
-  [ ] 1.6  Create src/components/features/tags/tag-detail.jsx
-  [ ] 1.7  Create src/components/features/tags/index.js
-  [ ] 1.8  Create src/pages/Tags.jsx (replace skeleton)
-  [ ] 1.9  Add /tags and /tags/:id routes to src/App.jsx
-  [ ] 1.10 Verify: build passes, tags CRUD works
+Step 1: Activity Backend
+  [ ] 1.1  Create electron/migrations/002_activity_usage_tables.sql
+  [ ] 1.2  Create electron/repositories/activity_repository.cjs
+  [ ] 1.3  Create electron/repositories/usage_repository.cjs
+  [ ] 1.4  Create electron/ipc/activity.ipc.cjs
+  [ ] 1.5  Create electron/ipc/analytics.ipc.cjs
+  [ ] 1.6  Update electron/preload.cjs with activity + analytics bridges
+  [ ] 1.7  Update src/lib/ipc.js with activityApi + analyticsApi
+  [ ] 1.8  Run migration (verify tables created)
+  [ ] 1.9  Verify: IPC handlers respond to invocations
 
-Step 2: Notes Module
-  [ ] 2.1  Create src/hooks/use-notes.js
-  [ ] 2.2  Create src/components/features/notes/note-columns.jsx
-  [ ] 2.3  Create src/components/features/notes/note-card.jsx
-  [ ] 2.4  Create src/components/features/notes/note-form.jsx
-  [ ] 2.5  Create src/components/features/notes/note-editor.jsx
-  [ ] 2.6  Create src/components/features/notes/note-list.jsx
-  [ ] 2.7  Create src/components/features/notes/note-detail.jsx
-  [ ] 2.8  Create src/components/features/notes/index.js
-  [ ] 2.9  Update src/pages/Notes.jsx (replace skeleton with feature module)
-  [ ] 2.10 Add /notes/:id route to src/App.jsx
-  [ ] 2.11 Verify: build passes, notes CRUD works, auto-save works
+Step 2: Activity Logging
+  [ ] 2.1  Add activity logging to electron/ipc/agents.ipc.cjs
+  [ ] 2.2  Add activity logging to electron/ipc/providers.ipc.cjs
+  [ ] 2.3  Add activity logging to electron/ipc/models.ipc.cjs
+  [ ] 2.4  Add activity logging to electron/ipc/projects.ipc.cjs
+  [ ] 2.5  Add activity logging to electron/ipc/notes.ipc.cjs
+  [ ] 2.6  Add activity logging to electron/ipc/tags.ipc.cjs
+  [ ] 2.7  Add activity logging to electron/ipc/api-keys.ipc.cjs
+  [ ] 2.8  Add activity logging to electron/ipc/accounts.ipc.cjs
+  [ ] 2.9  Verify: CRUD operations create activity log entries
 
-Step 3: Search System
-  [ ] 3.1  Create src/hooks/use-search.js
-  [ ] 3.2  Create src/components/search/search-input.jsx
-  [ ] 3.3  Create src/components/search/search-results.jsx
-  [ ] 3.4  Create src/components/search/index.js
-  [ ] 3.5  Update src/pages/Search.jsx (create or replace with feature)
-  [ ] 3.6  Add /search route to src/App.jsx
-  [ ] 3.7  Add Search link to Sidebar.jsx
-  [ ] 3.8  Verify: build passes, search returns grouped results
+Step 3: Analytics Frontend
+  [ ] 3.1  Create src/hooks/use-analytics.js
+  [ ] 3.2  Create src/hooks/use-activity.js
+  [ ] 3.3  Create src/components/features/analytics/usage-trends.jsx
+  [ ] 3.4  Create src/components/features/analytics/cost-analysis.jsx
+  [ ] 3.5  Create src/components/features/analytics/model-performance.jsx
+  [ ] 3.6  Create src/components/features/analytics/index.js
+  [ ] 3.7  Create src/pages/Analytics.jsx
+  [ ] 3.8  Add /analytics route to src/App.jsx
+  [ ] 3.9  Add Analytics link to Sidebar.jsx
+  [ ] 3.10 Verify: Analytics page renders, charts display
 
-Step 4: Command Palette
-  [ ] 4.1  Create src/components/command-palette/command-item.jsx
-  [ ] 4.2  Create src/components/command-palette/command-list.jsx
-  [ ] 4.3  Create src/components/command-palette/command-palette.jsx
-  [ ] 4.4  Create src/components/command-palette/index.js
-  [ ] 4.5  Wire Cmd+K keyboard shortcut to command-palette-store
-  [ ] 4.6  Integrate command-palette into App.jsx (global render)
-  [ ] 4.7  Verify: Cmd+K opens palette, navigation works
+Step 4: Activity Frontend
+  [ ] 4.1  Create src/components/features/activity/activity-item.jsx
+  [ ] 4.2  Create src/components/features/activity/activity-list.jsx
+  [ ] 4.3  Create src/components/features/activity/index.js
+  [ ] 4.4  Create src/pages/Activity.jsx
+  [ ] 4.5  Add /activity route to src/App.jsx
+  [ ] 4.6  Add Activity link to Sidebar.jsx
+  [ ] 4.7  Verify: Activity page renders, filtering works
 
-Step 5: Final Verification
-  [ ] 5.1  Run: npm run build — expect 0 errors
-  [ ] 5.2  Verify all routes work (/tags, /tags/:id, /notes/:id, /search)
-  [ ] 5.3  Verify sidebar navigation complete
-  [ ] 5.4  Verify command palette opens with Cmd+K
-  [ ] 5.5  Verify search returns results across all entities
-  [ ] 5.6  Verify tags CRUD + entity assignment
-  [ ] 5.7  Verify notes CRUD + auto-save
+Step 5: Dashboard Updates
+  [ ] 5.1  Update UsageChartWidget.jsx to use real data
+  [ ] 5.2  Update RecentActivityWidget.jsx to use real data
+  [ ] 5.3  Verify: Dashboard shows real data
 
-Step 6: Documentation
-  [ ] 6.1  Update TASKS.md — mark Phase 13 items complete
-  [ ] 6.2  Update AGENT_RULES.md — Phase 13 status
-  [ ] 6.3  Update AI_CODING_PLAYBOOK.md — Phase 13 status
-  [ ] 6.4  Update CODE_REVIEW_CHECKLIST.md — Phase 13 status
-  [ ] 6.5  Update NEXT_IMPLEMENT_PLAN.TXT — Phase 13 complete, next = Phase 14
+Step 6: Final Verification
+  [ ] 6.1  Run: npm run build — expect 0 errors
+  [ ] 6.2  Verify /analytics route works
+  [ ] 6.3  Verify /activity route works
+  [ ] 6.4  Verify sidebar navigation complete
+  [ ] 6.5  Verify analytics charts render with data
+  [ ] 6.6  Verify activity logging on all CRUD operations
+  [ ] 6.7  Verify activity filtering works
+  [ ] 6.8  Verify dashboard uses real data
+
+Step 7: Documentation
+  [ ] 7.1  Update TASKS.md — mark Phase 14 items complete
+  [ ] 7.2  Update AGENT_RULES.md — Phase 14 status
+  [ ] 7.3  Update AI_CODING_PLAYBOOK.md — Phase 14 status
+  [ ] 7.4  Update CODE_REVIEW_CHECKLIST.md — Phase 14 status
+  [ ] 7.5  Update NEXT_IMPLEMENT_PLAN.TXT — Phase 14 complete, next = Phase 15
 
 
 ===============================================================================

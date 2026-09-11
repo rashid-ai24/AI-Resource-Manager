@@ -1,22 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
-import { Bot, Server, Key, FolderOpen, FileText, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useRecentActivity } from '../../hooks/use-activity';
+import { Bot, Server, Cpu, User, Key, FolderOpen, FileText, Tag, Clock } from 'lucide-react';
 import { DashboardCard } from '../cards/DashboardCard';
 import { Skeleton } from '../ui/skeleton';
 import { Button } from '../ui/button';
-import { ipc } from '../../lib/ipc';
+import { Badge } from '../common/Badge';
 
 const entityIcons = {
   agent: Bot,
   provider: Server,
+  model: Cpu,
+  account: User,
   api_key: Key,
   project: FolderOpen,
   note: FileText,
+  tag: Tag,
 };
 
-const actionColors = {
-  created: 'text-emerald-500',
-  updated: 'text-blue-500',
-  deleted: 'text-red-500',
+const actionConfig = {
+  created: { variant: 'success', label: 'Created' },
+  updated: { variant: 'default', label: 'Updated' },
+  deleted: { variant: 'destructive', label: 'Deleted' },
 };
 
 function formatRelativeTime(dateString) {
@@ -32,27 +36,20 @@ function formatRelativeTime(dateString) {
 }
 
 function RecentActivityWidget() {
-  const { data: activityData, isLoading } = useQuery({
-    queryKey: ['dashboard', 'activity'],
-    queryFn: async () => {
-      // In a real app, this would fetch from the API
-      // For now, we'll return mock data
-      return [
-        { id: 1, type: 'agent', action: 'created', name: 'Customer Support Agent', timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString() },
-        { id: 2, type: 'provider', action: 'updated', name: 'OpenAI', timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString() },
-        { id: 3, type: 'api_key', action: 'created', name: 'Production API Key', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString() },
-        { id: 4, type: 'project', action: 'created', name: 'Website Redesign', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString() },
-        { id: 5, type: 'note', action: 'updated', name: 'Meeting Notes', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString() },
-      ];
-    },
-  });
+  const navigate = useNavigate();
+  const { data: activityData, isLoading } = useRecentActivity(5);
 
   return (
     <DashboardCard
       title="Recent Activity"
       icon={Clock}
       footer={
-        <Button variant="ghost" size="sm" className="w-full text-xs">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full text-xs"
+          onClick={() => navigate('/activity')}
+        >
           View All Activity
         </Button>
       }
@@ -71,29 +68,33 @@ function RecentActivityWidget() {
         </div>
       ) : (
         <div className="space-y-3">
-          {activityData?.map((activity) => {
-            const Icon = entityIcons[activity.type] || Bot;
-            const colorClass = actionColors[activity.action] || 'text-muted-foreground';
+          {(!activityData || activityData.length === 0) ? (
+            <p className="text-sm text-muted-foreground text-center py-4">No recent activity</p>
+          ) : (
+            activityData.map((activity) => {
+              const Icon = entityIcons[activity.entity_type] || Bot;
+              const action = actionConfig[activity.action] || { variant: 'secondary', label: activity.action };
 
-            return (
-              <div key={activity.id} className="flex items-center gap-3">
-                <div className="p-2 rounded-full bg-muted">
-                  <Icon className="size-4 text-muted-foreground" />
+              return (
+                <div key={activity.id} className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-muted">
+                    <Icon className="size-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {activity.entity_name || `Unknown ${activity.entity_type}`}
+                    </p>
+                    <Badge variant={action.variant} className="text-xs mt-0.5">
+                      {action.label}
+                    </Badge>
+                  </div>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    {formatRelativeTime(activity.created_at)}
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {activity.name}
-                  </p>
-                  <p className={`text-xs ${colorClass}`}>
-                    {activity.action}
-                  </p>
-                </div>
-                <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {formatRelativeTime(activity.timestamp)}
-                </span>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       )}
     </DashboardCard>
