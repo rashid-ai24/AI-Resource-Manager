@@ -7,6 +7,7 @@ import { CommandPalette } from './components/command-palette';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { queryClient } from './lib/query-client';
 import { Skeleton } from './components/ui/skeleton';
+import { ErrorBoundary } from './components/error-boundary';
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Agents = lazy(() => import('./pages/Agents'));
@@ -50,33 +51,35 @@ function AppContent() {
   return (
     <>
       <CommandPalette />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="agents" element={<Agents />} />
-            <Route path="agents/:id" element={<AgentDetail />} />
-            <Route path="providers" element={<Providers />} />
-            <Route path="providers/:id" element={<ProviderDetail />} />
-            <Route path="models" element={<Models />} />
-            <Route path="models/:id" element={<ModelDetail />} />
-            <Route path="accounts" element={<Accounts />} />
-            <Route path="accounts/:id" element={<AccountDetail />} />
-            <Route path="api-keys" element={<ApiKeys />} />
-            <Route path="api-keys/:id" element={<ApiKeyDetail />} />
-            <Route path="projects" element={<Projects />} />
-            <Route path="projects/:id" element={<ProjectDetail />} />
-            <Route path="notes" element={<Notes />} />
-            <Route path="notes/:id" element={<NoteDetail />} />
-            <Route path="tags" element={<Tags />} />
-            <Route path="tags/:id" element={<TagDetail />} />
-            <Route path="search" element={<SearchPage />} />
-            <Route path="analytics" element={<Analytics />} />
-            <Route path="activity" element={<Activity />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-        </Routes>
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="agents" element={<Agents />} />
+              <Route path="agents/:id" element={<AgentDetail />} />
+              <Route path="providers" element={<Providers />} />
+              <Route path="providers/:id" element={<ProviderDetail />} />
+              <Route path="models" element={<Models />} />
+              <Route path="models/:id" element={<ModelDetail />} />
+              <Route path="accounts" element={<Accounts />} />
+              <Route path="accounts/:id" element={<AccountDetail />} />
+              <Route path="api-keys" element={<ApiKeys />} />
+              <Route path="api-keys/:id" element={<ApiKeyDetail />} />
+              <Route path="projects" element={<Projects />} />
+              <Route path="projects/:id" element={<ProjectDetail />} />
+              <Route path="notes" element={<Notes />} />
+              <Route path="notes/:id" element={<NoteDetail />} />
+              <Route path="tags" element={<Tags />} />
+              <Route path="tags/:id" element={<TagDetail />} />
+              <Route path="search" element={<SearchPage />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="activity" element={<Activity />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     </>
   );
 }

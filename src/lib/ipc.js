@@ -486,6 +486,14 @@ export const templatesApi = {
   },
 };
 
+// Health API
+export const healthApi = {
+  status: async () => {
+    const result = await api.health.status();
+    return handleResponse(result);
+  },
+};
+
 // Combined API export
 export const ipc = {
   agents: agentsApi,
@@ -506,6 +514,7 @@ export const ipc = {
   notifications: notificationsApi,
   favorites: favoritesApi,
   templates: templatesApi,
+  health: healthApi,
 };
 
 export default ipc;

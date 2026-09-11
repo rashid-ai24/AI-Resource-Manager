@@ -140,4 +140,7 @@ contextBridge.exposeInMainWorld('api', {
     findByType: (templateType) => ipcRenderer.invoke('templates:findByType', templateType),
     duplicate: (id) => ipcRenderer.invoke('templates:duplicate', id),
   },
+  health: {
+    status: () => ipcRenderer.invoke('health:status'),
+  },
 });

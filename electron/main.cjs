@@ -19,6 +19,7 @@ const { registerQuotaHandlers } = require('./ipc/quotas.ipc.cjs');
 const { registerNotificationHandlers } = require('./ipc/notifications.ipc.cjs');
 const { registerFavoriteHandlers } = require('./ipc/favorites.ipc.cjs');
 const { registerTemplateHandlers } = require('./ipc/templates.ipc.cjs');
+const { registerHealthHandlers } = require('./health.cjs');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -60,6 +61,7 @@ function registerAllHandlers() {
   registerNotificationHandlers();
   registerFavoriteHandlers();
   registerTemplateHandlers();
+  registerHealthHandlers();
 
   // Window handlers
   ipcMain.handle('window:minimize', (event) => BrowserWindow.fromWebContents(event.sender)?.minimize());
