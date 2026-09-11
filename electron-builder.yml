@@ -35,33 +35,6 @@ nsis:
   createStartMenuShortcut: true
   shortcutName: AI Resource Manager
 
-mac:
-  target:
-    - target: dmg
-      arch:
-        - x64
-        - arm64
-    - target: zip
-      arch:
-        - x64
-        - arm64
-  icon: build/icon.icns
-  category: public.app-category.developer-tools
-  hardenedRuntime: true
-  gatekeeperAssess: false
-  entitlements: build/entitlements.mac.plist
-  entitlementsInherit: build/entitlements.mac.plist
-  artifactName: ${productName}-${version}-mac-${arch}.${ext}
-
-dmg:
-  contents:
-    - x: 130
-      y: 220
-    - x: 410
-      y: 220
-      type: link
-      path: /Applications
-
 linux:
   target:
     - target: AppImage
@@ -91,5 +64,3 @@ publish:
   owner: rashid-ai24
   repo: AI-Resource-Manager
   releaseType: release
-
-afterSign: scripts/notarize.js
