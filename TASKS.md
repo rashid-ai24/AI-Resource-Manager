@@ -407,26 +407,26 @@
 ## Phase 15: Settings, Backup, Import/Export
 
 ### Settings
-- [ ] Create Settings page
-- [ ] Create Appearance settings
-- [ ] Create Data settings
-- [ ] Create Notification settings
-- [ ] Create About settings
-- [ ] Create useSettings hook
+- [x] Create Settings page
+- [x] Create Appearance settings
+- [x] Create Data settings
+- [x] Create Notification settings
+- [x] Create About settings
+- [x] Create useSettings hook
 
 ### Backup/Restore
-- [ ] Create BackupDialog
-- [ ] Implement backup service (`electron/services/backup_service.cjs`)
-- [ ] Implement auto-backup
-- [ ] Implement restore
+- [x] Create BackupDialog
+- [x] Implement backup service (`electron/services/backup_service.cjs`)
+- [x] Implement auto-backup
+- [x] Implement restore
 
 ### Import/Export
-- [ ] Implement export service (`electron/services/export_service.cjs`)
-- [ ] Implement import service (`electron/services/import_service.cjs`)
-- [ ] Implement JSON export
-- [ ] Implement CSV export
-- [ ] Implement JSON import
-- [ ] Implement CSV import
+- [x] Implement export service (`electron/services/import_export_service.cjs`)
+- [x] Implement import service (`electron/services/import_export_service.cjs`)
+- [x] Implement JSON export
+- [x] Implement CSV export
+- [x] Implement JSON import
+- [x] Implement CSV import
 
 ---
 

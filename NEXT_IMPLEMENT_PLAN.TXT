@@ -1,931 +1,520 @@
-Phase 14: Analytics and Activity
-==================================
+Phase 16: Quotas, Notifications, Favorites, Templates
+======================================================
 
-PLAN STATUS: COMPLETE — 2026-09-11
+PLAN STATUS: READY FOR IMPLEMENTATION
 
 
-===============================================================================
+================================================================================
 1. PHASE OVERVIEW
-===============================================================================
+================================================================================
 
-Phase Number: 14
-Phase Name: Analytics and Activity
-Objective: Implement analytics dashboard with usage/cost/performance charts, and activity tracking system
+Phase Number: 16
+Phase Name: Quotas, Notifications, Favorites, Templates
+Objective: Implement quota tracking with reset logic, a notification system with display and badge, a favorites system for pinning entities, and a templates system for reusable entity configurations.
+
 Documentation Sources:
-  - TASKS.md (lines 389-401)
-  - IMPLEMENTATION_GUIDE.md (lines 1014-1060)
-  - AI_Resource_Manager_v2_Master_Blueprint.md
-    - Section 28: Analytics (lines 2767-2821)
-    - Section 31.3: Sidebar Navigation (lines 2969-2991)
-  - AGENT_RULES.md (line 27)
-  - AI_CODING_PLAYBOOK.md (line 27)
-  - CODE_REVIEW_CHECKLIST.md (line 27)
+  - TASKS.md (lines 433-456)
+  - AI_Resource_Manager_v2_Master_Blueprint.md (Sections 27, 51, 54)
+  - IMPLEMENTATION_GUIDE.md (Phase 16 section, lines 1131-1186)
+  - AGENT_RULES.md
+  - AI_CODING_PLAYBOOK.md
+  - CODE_REVIEW_CHECKLIST.md
+
+Dependencies:
+  - Phase 15 (Settings, Backup, Import/Export) — COMPLETE
+  - Settings IPC — COMPLETE
+  - Activity logging — COMPLETE
+  - Dashboard widgets — COMPLETE
+
+Database Tables Required:
+  - quotas — MUST be created (not in current schema)
+  - favorites — MUST be created (not in current schema)
+  - templates — MUST be created (not in current schema)
+  - notifications — MUST be created (not in current schema)
 
 
-===============================================================================
-2. CURRENT STATE
-===============================================================================
+================================================================================
+2. CURRENT STATE ANALYSIS
+================================================================================
 
-### Backend (Electron) — INCOMPLETE
+## 2.1 Quotas
 
-Activity:
-  - NO activity_logs table in database schema
-  - NO usage_logs table in database schema
-  - electron/ipc/activity.ipc.cjs — MISSING
-  - electron/repositories/activity_repository.cjs — MISSING
-  - No activity logging middleware or hooks in any repository
+### Database Table
+- DOES NOT EXIST. The quotas table is defined in the Master Blueprint ER diagram but has not been created in any migration.
 
-Analytics:
-  - electron/ipc/analytics.ipc.cjs — MISSING
-  - No analytics aggregation queries
-  - No IPC endpoints for chart data
+### Quota Repository
+- DOES NOT EXIST
 
-Database:
-  - src/database/migrations/001_initial_schema.sql — NO activity/usage tables
-  - Need new migration for activity_logs and usage_logs tables
+### Quota IPC Handler
+- DOES NOT EXIST
 
-### Frontend (React) — PARTIAL
+### UpcomingResetsWidget
+- EXISTS as a skeleton in dashboard but shows hardcoded data
 
-Analytics:
-  - src/pages/Analytics.jsx — MISSING (route defined in Blueprint but not created)
-  - src/components/features/analytics/ — MISSING (no components)
-  - src/hooks/use-analytics.js — MISSING
-  - /analytics route — MISSING in App.jsx
-  - Analytics sidebar link — MISSING
+## 2.2 Notifications
 
-Activity:
-  - src/components/dashboard/RecentActivityWidget.jsx — EXISTS but uses mock data
-  - No dedicated activity history page
-  - No activity filtering
+### Database Table
+- DOES NOT EXIST. The notifications table is defined in the Master Blueprint ER diagram but has not been created in any migration.
 
-Dashboard (already built, uses mock data):
-  - src/components/dashboard/UsageChartWidget.jsx — EXISTS with Recharts LineChart
-    but uses mock data (generateMockData function), not real IPC data
-  - src/components/dashboard/StatsWidget.jsx — EXISTS with real IPC data
-  - src/components/dashboard/QuickActionsWidget.jsx — EXISTS
-  - src/components/dashboard/UpcomingResetsWidget.jsx — EXISTS
+### Notification Service
+- DOES NOT EXIST
 
-Recharts:
-  - Package already installed: "recharts": "^3.8.0"
-  - Already used in UsageChartWidget.jsx (LineChart, Line, XAxis, YAxis, etc.)
-  - Need to add: PieChart, BarChart, AreaChart, ScatterChart for analytics
+### Notification Display UI
+- DOES NOT EXIST (only settings toggle in Phase 15)
 
+## 2.3 Favorites
 
-===============================================================================
-3. DOCUMENTATION vs CURRENT IMPLEMENTATION — GAP TABLE
-===============================================================================
+### Database Table
+- DOES NOT EXIST. The favorites table is defined in the Master Blueprint ER diagram but has not been created in any migration.
 
-| Requirement                    | Source             | Status        | Gap                                      |
-|-------------------------------|--------------------|---------------|------------------------------------------|
-| Analytics page                | TASKS L390         | Missing        | Create Analytics page + route            |
-| usage-trends component        | TASKS L391         | Missing        | Create usage trends chart component      |
-| cost-analysis component       | TASKS L392         | Missing        | Create cost analysis chart component     |
-| model-performance component   | TASKS L393         | Missing        | Create model performance component       |
-| Recharts integration          | TASKS L394         | Partial        | Recharts installed; need new charts      |
-| Activity history display      | TASKS L396         | Missing        | Create activity history page/component   |
-| Activity logging backend      | TASKS L397         | Missing        | New tables + repository + IPC            |
-| Activity filtering            | TASKS L398         | Missing        | Filter by entity type, action, date      |
-| Usage trends chart            | Blueprint 28.2     | Missing        | Line chart: tokens over time             |
-| Cost analysis charts          | Blueprint 28.3     | Missing        | Line/pie/bar charts: cost breakdown      |
-| Model performance charts      | Blueprint 28.4     | Missing        | Bar/scatter/histogram charts             |
-| Analytics time ranges         | Blueprint 28.5     | Missing        | 7d, 30d, 90d, 1y, Custom                |
-| /analytics route              | App.jsx            | Missing        | Add route                                |
-| Analytics sidebar link        | Sidebar.jsx        | Missing        | Add Analytics nav item                   |
-| Real usage data               | Dashboard          | Mock data      | Replace mock with IPC data               |
+### Favorites Repository
+- DOES NOT EXIST
+
+### Favorites IPC Handler
+- DOES NOT EXIST
+
+### useFavorites Hook
+- DOES NOT EXIST
+
+## 2.4 Templates
+
+### Database Table
+- DOES NOT EXIST. The templates table is defined in the Master Blueprint ER diagram but has not been created in any migration.
+
+### Templates Repository
+- DOES NOT EXIST
+
+### Templates IPC Handler
+- DOES NOT EXIST
+
+### useTemplates Hook
+- DOES NOT EXIST
 
 
-===============================================================================
+================================================================================
+3. GAP ANALYSIS
+================================================================================
+
+## 3.1 Quotas
+
+### Documentation Requirements:
+- Quota tracking for tokens, requests, cost
+- Reset intervals: daily, weekly, monthly
+- Quota notifications at 80%, 90%, 100% thresholds
+- UpcomingResetsWidget on dashboard
+
+### Current Implementation:
+- NO database table
+- NO repository
+- NO IPC handler
+- UpcomingResetsWidget exists but shows hardcoded data
+
+### Impact: FULL QUOTA SYSTEM REQUIRED (DB + backend + frontend)
+
+## 3.2 Notifications
+
+### Documentation Requirements:
+- Notification types: quota_reset, key_expiring, key_expired, backup_complete, import_complete, migration_complete
+- Notification display UI with badge
+- Mark as read functionality
+
+### Current Implementation:
+- NO database table
+- NO notification service
+- NO notification display
+
+### Impact: FULL NOTIFICATION SYSTEM REQUIRED
+
+## 3.3 Favorites
+
+### Documentation Requirements:
+- Add/remove favorites
+- List favorites by entity type
+- Unique constraint: (entity_type, entity_id)
+
+### Current Implementation:
+- NO database table
+- NO repository
+- NO IPC handler
+- NO hook
+
+### Impact: FULL FAVORITES SYSTEM REQUIRED
+
+## 3.4 Templates
+
+### Documentation Requirements:
+- Create template from entity data
+- Create entity from template
+- Template name, entity_type, config (JSON)
+
+### Current Implementation:
+- NO database table
+- NO repository
+- NO IPC handler
+- NO hook
+
+### Impact: FULL TEMPLATES SYSTEM REQUIRED
+
+
+================================================================================
 4. IMPLEMENTATION STRATEGY
-===============================================================================
+================================================================================
 
-Split into 3 sub-features, implemented bottom-up (dependencies first):
+## 4.1 Build Order
 
-  Sub-feature A: Activity Backend + IPC (new tables, repository, IPC handler)
-  Sub-feature B: Analytics Backend + IPC (aggregation queries, IPC handler)
-  Sub-feature C: Analytics Frontend (page, chart components, hooks)
+```
+Step 1: Database migration — create quotas, favorites, templates, notifications tables
+Step 2: Quota repository + IPC handler
+Step 3: Notification service + IPC handler
+Step 4: Favorites repository + IPC handler
+Step 5: Templates repository + IPC handler
+Step 6: Register all handlers in main.cjs
+Step 7: Update preload.cjs with new channels
+Step 8: Update ipc.js client
+Step 9: Create frontend hooks (useQuotas, useNotifications, useFavorites, useTemplates)
+Step 10: Create QuotaManager component
+Step 11: Create NotificationDisplay component + badge
+Step 12: Create FavoritesWidget component
+Step 13: Create TemplatesManager component
+Step 14: Update UpcomingResetsWidget with real data
+Step 15: Build verification + documentation updates
+```
 
-Order: A → B → C
+## 4.2 Key Design Decisions
 
-Rationale:
-  - Activity backend must exist before analytics can query activity data
-  - Analytics backend provides aggregation endpoints for frontend charts
-  - Frontend depends on both backend subsystems being complete
-  - Dashboard mock data replaced as part of analytics frontend work
+1. **Database migration required.** Four new tables must be created via inline migration in database.cjs (same pattern as Phase 14).
+
+2. **Quota tracking is account/provider-level.** Quotas link to accounts or providers, not individual models.
+
+3. **Notifications are generated by services.** When a quota threshold is hit, when a backup completes, etc., the service creates a notification record.
+
+4. **Favorites use unique constraint.** (entity_type, entity_id) prevents duplicate favorites.
+
+5. **Templates store config as JSON string.** Same pattern as the Master Blueprint specification.
 
 
-===============================================================================
+================================================================================
 5. FILES TO CREATE
-===============================================================================
+================================================================================
 
-### 5A. Activity Backend
+## 5.1 Database
 
-  electron/migrations/002_activity_usage_tables.sql
-    Purpose: New tables for activity_logs and usage_logs
-    Tables:
-      activity_logs (id, entity_type, entity_id, entity_name, action, details, created_at)
-      usage_logs (id, agent_id, provider_id, model_id, project_id,
-                  input_tokens, output_tokens, cost, timestamp)
+### Inline migration in electron/database.cjs
+- Add CREATE TABLE for quotas, favorites, templates, notifications
+- Add indexes for common queries
 
-  electron/repositories/activity_repository.cjs
-    Purpose: Activity logging and querying
-    Dependencies: base_repository.cjs
-    Methods:
-      - log(entityType, entityId, entityName, action, details)
-      - findAllWithFilters(filters) — filter by entity_type, action, date range
-      - findByEntity(entityType, entityId)
-      - getRecent(limit)
-      - getStats() — count by entity type, action breakdown
+## 5.2 Backend Files
 
-  electron/repositories/usage_repository.cjs
-    Purpose: Usage data storage and aggregation
-    Dependencies: base_repository.cjs
-    Methods:
-      - logUsage(data) — record token usage
-      - getUsageOverTime(timeRange, filters) — daily aggregation
-      - getCostOverTime(timeRange, filters) — daily cost aggregation
-      - getCostByProvider(timeRange)
-      - getCostByModel(timeRange)
-      - getCostByProject(timeRange)
-      - getUsageByModel(timeRange)
-      - getTokenDistribution(timeRange)
+### electron/repositories/quota_repository.cjs
+- Purpose: CRUD for quotas, quota checking, reset logic
+- Methods: create, update, delete, getById, list, checkQuota, resetQuotas
 
-  electron/ipc/activity.ipc.cjs
-    Purpose: IPC handlers for activity operations
-    Dependencies: activity_repository.cjs, validators.cjs
-    Channels:
-      - activity:list (filters)
-      - activity:getByEntity (entityType, entityId)
-      - activity:getRecent (limit)
-      - activity:getStats
+### electron/repositories/favorite_repository.cjs
+- Purpose: CRUD for favorites
+- Methods: add, remove, list, getByEntity, isFavorite
 
-  electron/ipc/analytics.ipc.cjs
-    Purpose: IPC handlers for analytics data
-    Dependencies: usage_repository.cjs
-    Channels:
-      - analytics:usageOverTime (timeRange, filters)
-      - analytics:costOverTime (timeRange, filters)
-      - analytics:costByProvider (timeRange)
-      - analytics:costByModel (timeRange)
-      - analytics:costByProject (timeRange)
-      - analytics:usageByModel (timeRange)
-      - analytics:tokenDistribution (timeRange)
+### electron/repositories/template_repository.cjs
+- Purpose: CRUD for templates
+- Methods: create, update, delete, getById, list, createFromEntity
 
-  electron/preload.cjs (MODIFY)
-    Purpose: Add activity and analytics bridges
-    Change: Add activity and analytics methods to window.api
+### electron/repositories/notification_repository.cjs
+- Purpose: CRUD for notifications
+- Methods: create, list, markRead, markAllRead, getUnreadCount, delete
 
-  src/lib/ipc.js (MODIFY)
-    Purpose: Add activity and analytics API modules
-    Change: Add activityApi and analyticsApi exports
+### electron/ipc/quotas.ipc.cjs
+- Purpose: IPC handlers for quota operations
+- Channels: quotas:create, quotas:update, quotas:delete, quotas:list, quotas:get, quotas:check, quotas:reset
 
-### 5B. Analytics Frontend
+### electron/ipc/notifications.ipc.cjs
+- Purpose: IPC handlers for notification operations
+- Channels: notifications:list, notifications:unreadCount, notifications:markRead, notifications:markAllRead, notifications:delete
 
-  src/hooks/use-analytics.js
-    Purpose: React Query hooks for analytics data
-    Dependencies: src/lib/ipc.js (analyticsApi), React Query
-    Queries:
-      - useUsageOverTime(timeRange, filters)
-      - useCostOverTime(timeRange, filters)
-      - useCostByProvider(timeRange)
-      - useCostByModel(timeRange)
-      - useCostByProject(timeRange)
-      - useUsageByModel(timeRange)
+### electron/ipc/favorites.ipc.cjs
+- Purpose: IPC handlers for favorites operations
+- Channels: favorites:add, favorites:remove, favorites:list, favorites:check
 
-  src/hooks/use-activity.js
-    Purpose: React Query hooks for activity data
-    Dependencies: src/lib/ipc.js (activityApi), React Query
-    Queries:
-      - useActivity(filters)
-      - useRecentActivity(limit)
-      - useActivityStats
+### electron/ipc/templates.ipc.cjs
+- Purpose: IPC handlers for templates operations
+- Channels: templates:create, templates:update, templates:delete, templates:list, templates:get, templates:createEntity
 
-  src/components/features/analytics/usage-trends.jsx
-    Purpose: Usage trends line chart (tokens over time)
-    Dependencies: recharts (LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer)
-    Features:
-      - Time range selector (7d, 30d, 90d, 1y)
-      - Input vs Output tokens (stacked area or multi-line)
-      - By provider (multi-line, optional)
-      - By model (multi-line, optional)
-      - Responsive container
+### electron/services/notification_service.cjs
+- Purpose: Generate notifications for system events
+- Methods: notify QuotaThreshold, notifyBackupComplete, notifyImportComplete, notifyKeyExpiring
 
-  src/components/features/analytics/cost-analysis.jsx
-    Purpose: Cost analysis charts
-    Dependencies: recharts (LineChart, PieChart, BarChart, Cell, Tooltip, Legend, ResponsiveContainer)
-    Features:
-      - Cost over time (line chart)
-      - Cost by provider (pie chart)
-      - Cost by model (bar chart)
-      - Cost by project (bar chart)
-      - Time range selector
+## 5.3 Frontend Files
 
-  src/components/features/analytics/model-performance.jsx
-    Purpose: Model performance charts
-    Dependencies: recharts (BarChart, ScatterChart, Bar, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer)
-    Features:
-      - Usage by model (bar chart)
-      - Cost efficiency (scatter plot: cost vs usage)
-      - Token distribution (histogram)
-      - Time range selector
+### src/hooks/use-quotas.js
+- Purpose: React Query hook for quota management
 
-  src/components/features/analytics/index.js
-    Purpose: Barrel export for all analytics components
+### src/hooks/use-notifications.js
+- Purpose: React Query hook for notifications
 
-  src/pages/Analytics.jsx
-    Purpose: Full analytics page with all chart sections
-    Dependencies: usage-trends, cost-analysis, model-performance, PageHeader
-    Features:
-      - PageHeader with "Analytics" title
-      - Time range selector (global)
-      - Usage trends section
-      - Cost analysis section
-      - Model performance section
-      - Loading/error states
+### src/hooks/use-favorites.js
+- Purpose: React Query hook for favorites
 
-  src/components/features/activity/activity-list.jsx
-    Purpose: Activity history list with filtering
-    Dependencies: use-activity.js, PageHeader, EmptyState, LoadingPage, ErrorState
-    Features:
-      - PageHeader with "Activity" title
-      - Filter by entity type (agent, provider, model, etc.)
-      - Filter by action (created, updated, deleted)
-      - Filter by date range
-      - Activity cards with entity icon, action, timestamp
-      - Relative time display
-      - Empty state
-      - Loading skeleton
+### src/hooks/use-templates.js
+- Purpose: React Query hook for templates
 
-  src/components/features/activity/activity-item.jsx
-    Purpose: Single activity log entry
-    Dependencies: lucide-react icons
-    Features:
-      - Entity type icon
-      - Entity name (clickable link)
-      - Action badge (created/updated/deleted)
-      - Details text (if any)
-      - Relative timestamp
-      - Click to navigate to entity
+### src/components/features/quotas/quota-manager.jsx
+- Purpose: UI for managing quotas (create, edit, delete, view)
 
-  src/components/features/activity/index.js
-    Purpose: Barrel export
+### src/components/features/notifications/notification-display.jsx
+- Purpose: Notification list with badge, mark as read
 
-  src/pages/Activity.jsx (NEW)
-    Purpose: Activity history page
-    Depends on: activity-list
+### src/components/features/notifications/notification-badge.jsx
+- Purpose: Unread count badge for sidebar/header
+
+### src/components/features/favorites/favorites-widget.jsx
+- Purpose: Display favorite entities
+
+### src/components/features/templates/template-manager.jsx
+- Purpose: UI for managing templates
+
+### src/components/features/quotas/index.js
+- Purpose: Barrel export
+
+### src/components/features/notifications/index.js
+- Purpose: Barrel export
+
+### src/components/features/favorites/index.js
+- Purpose: Barrel export
+
+### src/components/features/templates/index.js
+- Purpose: Barrel export
 
 
-===============================================================================
+================================================================================
 6. FILES TO MODIFY
-===============================================================================
-
-  src/App.jsx
-    Why: Add missing routes
-    Change: Add /analytics, /activity routes
-    Preserve: All existing routes and imports
-
-  src/components/Sidebar.jsx
-    Why: Add Analytics navigation link
-    Change: Add Analytics entry to links array
-    Preserve: Existing links order and icon imports
-
-  electron/preload.cjs
-    Why: Expose activity and analytics IPC bridges
-    Change: Add activity and analytics methods
-    Preserve: All existing bridges
-
-  src/lib/ipc.js
-    Why: Add activity and analytics API modules
-    Change: Add activityApi and analyticsApi exports
-    Preserve: All existing API modules
-
-  electron/ipc/agents.ipc.cjs
-    Why: Add activity logging on create/update/delete
-    Change: Call activityRepository.log() after mutations
-    Preserve: Existing IPC handler logic
-
-  electron/ipc/providers.ipc.cjs
-    Why: Add activity logging on create/update/delete
-    Change: Call activityRepository.log() after mutations
-    Preserve: Existing IPC handler logic
-
-  electron/ipc/models.ipc.cjs
-    Why: Add activity logging on create/update/delete
-    Change: Call activityRepository.log() after mutations
-    Preserve: Existing IPC handler logic
-
-  electron/ipc/projects.ipc.cjs
-    Why: Add activity logging on create/update/delete
-    Change: Call activityRepository.log() after mutations
-    Preserve: Existing IPC handler logic
-
-  electron/ipc/notes.ipc.cjs
-    Why: Add activity logging on create/update/delete
-    Change: Call activityRepository.log() after mutations
-    Preserve: Existing IPC handler logic
-
-  electron/ipc/tags.ipc.cjs
-    Why: Add activity logging on create/update/delete
-    Change: Call activityRepository.log() after mutations
-    Preserve: Existing IPC handler logic
-
-  electron/ipc/api-keys.ipc.cjs
-    Why: Add activity logging on create/update/delete
-    Change: Call activityRepository.log() after mutations
-    Preserve: Existing IPC handler logic
-
-  electron/ipc/accounts.ipc.cjs
-    Why: Add activity logging on create/update/delete
-    Change: Call activityRepository.log() after mutations
-    Preserve: Existing IPC handler logic
-
-  src/components/dashboard/UsageChartWidget.jsx
-    Why: Replace mock data with real IPC data
-    Change: Use useAnalytics hook instead of generateMockData
-    Preserve: Existing chart layout and styling
-
-  src/components/dashboard/RecentActivityWidget.jsx
-    Why: Replace mock data with real IPC data
-    Change: Use useRecentActivity hook instead of hardcoded data
-    Preserve: Existing component layout and styling
-
-
-===============================================================================
-7. BACKEND / ELECTRON CHANGES
-===============================================================================
-
-### 7A. New Database Migration
-
-  electron/migrations/002_activity_usage_tables.sql
-
-  -- Activity Logs table
-  CREATE TABLE IF NOT EXISTS activity_logs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      entity_type TEXT NOT NULL,
-      entity_id INTEGER,
-      entity_name TEXT DEFAULT '',
-      action TEXT NOT NULL,
-      details TEXT DEFAULT '',
-      created_at TEXT DEFAULT (datetime('now'))
-  );
-
-  -- Usage Logs table
-  CREATE TABLE IF NOT EXISTS usage_logs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      agent_id INTEGER,
-      provider_id INTEGER,
-      model_id INTEGER,
-      project_id INTEGER,
-      input_tokens INTEGER DEFAULT 0,
-      output_tokens INTEGER DEFAULT 0,
-      cost REAL DEFAULT 0,
-      timestamp TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE SET NULL,
-      FOREIGN KEY (provider_id) REFERENCES providers(id) ON DELETE SET NULL,
-      FOREIGN KEY (model_id) REFERENCES models(id) ON DELETE SET NULL,
-      FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL
-  );
-
-  -- Indexes
-  CREATE INDEX IF NOT EXISTS idx_activity_entity ON activity_logs(entity_type, entity_id);
-  CREATE INDEX IF NOT EXISTS idx_activity_action ON activity_logs(action);
-  CREATE INDEX IF NOT EXISTS idx_activity_created ON activity_logs(created_at);
-  CREATE INDEX IF NOT EXISTS idx_usage_agent ON usage_logs(agent_id);
-  CREATE INDEX IF NOT EXISTS idx_usage_provider ON usage_logs(provider_id);
-  CREATE INDEX IF NOT EXISTS idx_usage_model ON usage_logs(model_id);
-  CREATE INDEX IF NOT EXISTS idx_usage_project ON usage_logs(project_id);
-  CREATE INDEX IF NOT EXISTS idx_usage_timestamp ON usage_logs(timestamp);
-
-### 7B. New Repositories
-
-  electron/repositories/activity_repository.cjs
-    Pattern: Follow base_repository.cjs pattern
-    Extends: BaseRepository
-    Table: activity_logs
-    Methods:
-      - log(entityType, entityId, entityName, action, details) — INSERT
-      - findAllWithFilters({ entityType, action, startDate, endDate, limit, offset })
-        → SELECT with WHERE clauses for each filter
-      - findByEntity(entityType, entityId) → WHERE entity_type = ? AND entity_id = ?
-      - getRecent(limit) → ORDER BY created_at DESC LIMIT ?
-      - getStats() → SELECT COUNT by entity_type, COUNT by action
-      - deleteOlderThan(date) → DELETE WHERE created_at < ?
-
-  electron/repositories/usage_repository.cjs
-    Pattern: Follow base_repository.cjs pattern
-    Extends: BaseRepository
-    Table: usage_logs
-    Methods:
-      - logUsage({ agentId, providerId, modelId, projectId, inputTokens, outputTokens, cost })
-      - getUsageOverTime(timeRange, { agentId, providerId, modelId, projectId })
-        → SELECT date(timestamp), SUM(input_tokens), SUM(output_tokens)
-          GROUP BY date(timestamp) ORDER BY date
-      - getCostOverTime(timeRange, filters)
-        → SELECT date(timestamp), SUM(cost) GROUP BY date(timestamp)
-      - getCostByProvider(timeRange)
-        → SELECT provider.name, SUM(cost) JOIN providers GROUP BY provider_id
-      - getCostByModel(timeRange)
-        → SELECT model.name, SUM(cost) JOIN models GROUP BY model_id
-      - getCostByProject(timeRange)
-        → SELECT project.name, SUM(cost) JOIN projects GROUP BY project_id
-      - getUsageByModel(timeRange)
-        → SELECT model.name, SUM(input_tokens), SUM(output_tokens) JOIN models GROUP BY model_id
-      - getTokenDistribution(timeRange)
-        → SELECT input_tokens, output_tokens per record for histogram
-
-### 7C. New IPC Handlers
-
-  electron/ipc/activity.ipc.cjs
-    Pattern: Follow agents.ipc.cjs pattern
-    Channels:
-      - activity:list → activityRepository.findAllWithFilters(filters)
-      - activity:getByEntity → activityRepository.findByEntity(entityType, entityId)
-      - activity:getRecent → activityRepository.getRecent(limit)
-      - activity:getStats → activityRepository.getStats()
-
-  electron/ipc/analytics.ipc.cjs
-    Pattern: Follow agents.ipc.cjs pattern
-    Channels:
-      - analytics:usageOverTime → usageRepository.getUsageOverTime(timeRange, filters)
-      - analytics:costOverTime → usageRepository.getCostOverTime(timeRange, filters)
-      - analytics:costByProvider → usageRepository.getCostByProvider(timeRange)
-      - analytics:costByModel → usageRepository.getCostByModel(timeRange)
-      - analytics:costByProject → usageRepository.getCostByProject(timeRange)
-      - analytics:usageByModel → usageRepository.getUsageByModel(timeRange)
-      - analytics:tokenDistribution → usageRepository.getTokenDistribution(timeRange)
-
-### 7D. Preload Bridge Updates
-
-  electron/preload.cjs
-    Add to window.api:
-      activity: {
-        list: (filters) => ipcRenderer.invoke('activity:list', filters),
-        getByEntity: (entityType, entityId) => ipcRenderer.invoke('activity:getByEntity', entityType, entityId),
-        getRecent: (limit) => ipcRenderer.invoke('activity:getRecent', limit),
-        getStats: () => ipcRenderer.invoke('activity:getStats'),
-      },
-      analytics: {
-        usageOverTime: (timeRange, filters) => ipcRenderer.invoke('analytics:usageOverTime', timeRange, filters),
-        costOverTime: (timeRange, filters) => ipcRenderer.invoke('analytics:costOverTime', timeRange, filters),
-        costByProvider: (timeRange) => ipcRenderer.invoke('analytics:costByProvider', timeRange),
-        costByModel: (timeRange) => ipcRenderer.invoke('analytics:costByModel', timeRange),
-        costByProject: (timeRange) => ipcRenderer.invoke('analytics:costByProject', timeRange),
-        usageByModel: (timeRange) => ipcRenderer.invoke('analytics:usageByModel', timeRange),
-        tokenDistribution: (timeRange) => ipcRenderer.invoke('analytics:tokenDistribution', timeRange),
-      }
-
-### 7E. Activity Logging in Existing IPC Handlers
-
-  Each entity IPC handler (agents, providers, models, projects, notes, tags, api-keys, accounts)
-  gets activity logging added after successful mutations:
-
-  Pattern:
-    const activityRepo = require('../repositories/activity_repository.cjs');
-
-    // After successful create:
-    activityRepo.log('agent', result.id, result.name, 'created', '');
-
-    // After successful update:
-    activityRepo.log('agent', id, name, 'updated', '');
-
-    // After successful delete:
-    activityRepo.log('agent', id, name, 'deleted', '');
-
-
-===============================================================================
-8. FRONTEND CHANGES — DETAILED
-===============================================================================
-
-### 8A. Analytics Hooks
-
-  src/hooks/use-analytics.js
-    Pattern: Follow use-agents.js structure
-    Implementation:
-      - useUsageOverTime(timeRange, filters) — useQuery calling analyticsApi.usageOverTime
-      - useCostOverTime(timeRange, filters) — useQuery calling analyticsApi.costOverTime
-      - useCostByProvider(timeRange) — useQuery calling analyticsApi.costByProvider
-      - useCostByModel(timeRange) — useQuery calling analyticsApi.costByModel
-      - useCostByProject(timeRange) — useQuery calling analyticsApi.costByProject
-      - useUsageByModel(timeRange) — useQuery calling analyticsApi.usageByModel
-    Query keys: ['analytics', 'usage', timeRange, filters]
-    Stale time: 60 seconds (data changes infrequently)
-
-  src/hooks/use-activity.js
-    Pattern: Follow use-agents.js
-    Implementation:
-      - useActivity(filters) — useQuery calling activityApi.list
-      - useRecentActivity(limit) — useQuery calling activityApi.getRecent
-      - useActivityStats — useQuery calling activityApi.getStats
-    Query keys: ['activity', filters], ['activity', 'recent', limit], ['activity', 'stats']
-
-### 8B. Analytics Components
-
-  src/components/features/analytics/usage-trends.jsx
-    Pattern: Follow UsageChartWidget.jsx pattern (already uses Recharts)
-    Props: { timeRange }
-    Features:
-      - Uses useUsageOverTime(timeRange) hook
-      - ResponsiveContainer with LineChart
-      - XAxis (date), YAxis (tokens)
-      - CartesianGrid (strokeDasharray)
-      - Tooltip (styled like UsageChartWidget)
-      - Legend
-      - Line for inputTokens (blue)
-      - Line for outputTokens (green)
-      - Empty state when no data
-      - Loading skeleton
-
-  src/components/features/analytics/cost-analysis.jsx
-    Pattern: NEW (multiple chart types)
-    Props: { timeRange }
-    Features:
-      - Uses useCostOverTime, useCostByProvider, useCostByModel, useCostByProject hooks
-      - 2x2 grid layout:
-        - Cost over time: LineChart (same pattern as usage-trends)
-        - Cost by provider: PieChart with colors
-        - Cost by model: BarChart
-        - Cost by project: BarChart
-      - Each chart in a Card with title
-      - Responsive containers
-      - Empty states per chart
-      - Loading skeletons
-
-  src/components/features/analytics/model-performance.jsx
-    Pattern: NEW
-    Props: { timeRange }
-    Features:
-      - Uses useUsageByModel hook
-      - 2 charts:
-        - Usage by model: BarChart (horizontal bars)
-        - Cost efficiency: ScatterChart (x=cost, y=usage)
-      - Each chart in a Card
-      - Responsive containers
-      - Empty states
-      - Loading skeletons
-
-  src/components/features/analytics/index.js
-    export { UsageTrends } from './usage-trends';
-    export { CostAnalysis } from './cost-analysis';
-    export { ModelPerformance } from './model-performance';
-
-### 8C. Activity Components
-
-  src/components/features/activity/activity-item.jsx
-    Pattern: Follow RecentActivityWidget.jsx pattern
-    Props: { activity }
-    Features:
-      - Entity type icon (Bot, Server, Cpu, FolderOpen, FileText, Tag, Key, User)
-      - Entity name (clickable, navigates to entity detail)
-      - Action badge: created (success), updated (default), deleted (destructive)
-      - Details text (if provided)
-      - Relative timestamp (formatRelativeTime from RecentActivityWidget)
-      - Click handler for navigation
-
-  src/components/features/activity/activity-list.jsx
-    Pattern: Follow agent-list.jsx
-    Props: { filters, onFiltersChange }
-    Features:
-      - PageHeader with "Activity" title
-      - Filter row:
-        - Entity type dropdown (All, Agent, Provider, Model, etc.)
-        - Action dropdown (All, Created, Updated, Deleted)
-        - Date range (start/end date inputs)
-      - List of activity-item components
-      - Empty state when no activity
-      - Loading skeleton
-      - Pagination (if needed)
-
-  src/components/features/activity/index.js
-    export { ActivityList } from './activity-list';
-    export { ActivityItem } from './activity-item';
-
-### 8D. Analytics Page
-
-  src/pages/Analytics.jsx
-    Pattern: Follow Dashboard.jsx layout
-    Features:
-      - PageHeader with "Analytics" title + description
-      - Time range selector (7d, 30d, 90d, 1y) — local state
-      - UsageTrends section
-      - CostAnalysis section
-      - ModelPerformance section
-      - Each section in a grid/card layout
-      - Loading states during initial fetch
-      - Error states with retry
-
-### 8E. Activity Page
-
-  src/pages/Activity.jsx (NEW)
-    Pattern: Follow Agents.jsx / Providers.jsx
-    Features:
-      - ActivityList component
-      - No create dialog (activity is read-only)
-      - PageHeader with "Activity" title
-
-### 8F. Dashboard Updates
-
-  src/components/dashboard/UsageChartWidget.jsx
-    Why: Replace mock data with real data
-    Change:
-      - Import useUsageOverTime from analytics hooks
-      - Replace generateMockData with hook data
-      - Keep existing chart layout and styling
-      - Add timeRange prop support
-    Preserve: All existing Recharts imports and chart configuration
-
-  src/components/dashboard/RecentActivityWidget.jsx
-    Why: Replace mock data with real data
-    Change:
-      - Import useRecentActivity from activity hooks
-      - Replace hardcoded activity data with hook data
-      - Keep existing component layout
-      - Add "View All Activity" navigation to /activity
-    Preserve: All existing styling and formatting functions
-
-
-===============================================================================
-9. DATA FLOW
-===============================================================================
-
-### Activity Flow
-
-  Entity CRUD (e.g., create agent)
-    → IPC handler calls activityRepository.log('agent', id, name, 'created', '')
-    → INSERT INTO activity_logs
-    → Activity page / RecentActivityWidget queries activity:list
-    → activityRepository.findAllWithFilters()
-    → SELECT with WHERE clauses
-    → Returns filtered activity list
-
-### Analytics Flow
-
-  Analytics page loads
-    → useUsageOverTime(30) fires
-    → analyticsApi.usageOverTime(30, {})
-    → IPC → usageRepository.getUsageOverTime(30, {})
-    → SELECT date(timestamp), SUM(input_tokens), SUM(output_tokens)
-      FROM usage_logs
-      WHERE timestamp >= date('now', '-30 days')
-      GROUP BY date(timestamp)
-      ORDER BY date
-    → Returns [{date, inputTokens, outputTokens}, ...]
-    → UsageTrends renders LineChart
-
-  Cost analysis loads
-    → useCostByProvider(30) fires
-    → analyticsApi.costByProvider(30)
-    → IPC → usageRepository.getCostByProvider(30)
-    → SELECT p.name, SUM(u.cost)
-      FROM usage_logs u
-      JOIN providers p ON u.provider_id = p.id
-      WHERE u.timestamp >= date('now', '-30 days')
-      GROUP BY u.provider_id
-    → Returns [{name, cost}, ...]
-    → CostAnalysis renders PieChart
-
-### Dashboard Flow
-
-  Dashboard loads
-    → UsageChartWidget calls useUsageOverTime(30)
-    → Real data from IPC (replaces mock)
-    → RecentActivityWidget calls useRecentActivity(5)
-    → Real data from IPC (replaces mock)
-
-
-===============================================================================
-10. VALIDATION AND ERROR HANDLING
-===============================================================================
-
-### Validation
-  - Time range: 7, 30, 90, 365 (integer, days)
-  - Activity filters: entityType (string), action (string), dateRange (ISO strings)
-  - Usage log: agentId/providerId/modelId (optional integers), tokens (integers >= 0), cost (number >= 0)
-
-### Error Handling
-  - All hooks return { data, isLoading, error } from React Query
-  - Charts show empty state when no data (not error)
-  - Charts show loading skeleton during fetch
-  - Activity list shows EmptyState when no logs
-  - ErrorState with retry on API failures
-  - Activity logging failures are silent (don't break CRUD operations)
-
-### Cache Invalidation
-  - Activity queries: staleTime 30 seconds
-  - Analytics queries: staleTime 60 seconds
-  - CRUD mutations trigger activity log → activity list auto-refreshes
-  - Dashboard queries: staleTime 60 seconds (after mock removal)
-
-### Activity Logging Strategy
-  - Activity is logged AFTER successful mutations (not before)
-  - Logging failures are caught and logged to console (non-blocking)
-  - No activity logging for read operations (list, get)
-  - Entity name stored for display (avoids joins for recent activity)
-
-
-===============================================================================
-11. ACCEPTANCE CRITERIA
-===============================================================================
-
-From TASKS.md lines 389-401 and IMPLEMENTATION_GUIDE.md lines 1046-1050:
-
-  [ ] Analytics page exists with route /analytics
-  [ ] Usage trends chart works with real data
-  [ ] Cost analysis charts work (line, pie, bar)
-  [ ] Model performance charts work (bar, scatter)
-  [ ] Time range selector works (7d, 30d, 90d, 1y)
-  [ ] Activity history displays with filtering
-  [ ] Activity logging automatic on entity CRUD
-  [ ] Dashboard uses real data (not mock)
-  [ ] /analytics route works
-  [ ] Sidebar has Analytics link
-  [ ] Build passes without errors
-
-From Master Blueprint:
-
-  [ ] Usage trends: token usage over time (line chart)
-  [ ] Usage trends: input vs output tokens (stacked area or multi-line)
-  [ ] Cost analysis: cost over time (line chart)
-  [ ] Cost analysis: cost by provider (pie chart)
-  [ ] Cost analysis: cost by model (bar chart)
-  [ ] Cost analysis: cost by project (bar chart)
-  [ ] Model performance: usage by model (bar chart)
-  [ ] Model performance: cost efficiency (scatter plot)
-  [ ] Time ranges: 7d, 30d, 90d, 1y
-  [ ] Activity: entity type filter
-  [ ] Activity: action filter (created/updated/deleted)
-  [ ] Activity: date range filter
-  [ ] Activity: relative timestamps
-
-
-===============================================================================
-12. VERIFICATION PLAN
-===============================================================================
+================================================================================
+
+### electron/database.cjs
+- Add inline migration for quotas, favorites, templates, notifications tables
+
+### electron/main.cjs
+- Register new IPC handlers for quotas, notifications, favorites, templates
+
+### electron/preload.cjs
+- Add new IPC channel bridges for quotas, notifications, favorites, templates
+
+### src/lib/ipc.js
+- Add new API methods for quotas, notifications, favorites, templates
+
+### src/components/dashboard/UpcomingResetsWidget.jsx
+- Replace hardcoded data with real quota data
+
+### src/components/Sidebar.jsx
+- Add notification badge (optional, depends on notification display location)
+
+
+================================================================================
+7. DATABASE CHANGES
+================================================================================
+
+**Migration required.** Four new tables must be added via inline CREATE TABLE IF NOT EXISTS in database.cjs.
+
+### quotas table
+```sql
+CREATE TABLE IF NOT EXISTS quotas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entity_type TEXT NOT NULL,
+  entity_id INTEGER NOT NULL,
+  quota_type TEXT NOT NULL,
+  limit_value REAL NOT NULL,
+  current_value REAL NOT NULL DEFAULT 0,
+  reset_interval TEXT,
+  reset_day INTEGER,
+  last_reset TEXT,
+  next_reset TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_quotas_entity ON quotas(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_quotas_type ON quotas(quota_type);
+```
+
+### favorites table
+```sql
+CREATE TABLE IF NOT EXISTS favorites (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entity_type TEXT NOT NULL,
+  entity_id INTEGER NOT NULL,
+  sort_order INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now')),
+  UNIQUE(entity_type, entity_id)
+);
+CREATE INDEX IF NOT EXISTS idx_favorites_entity ON favorites(entity_type, entity_id);
+```
+
+### templates table
+```sql
+CREATE TABLE IF NOT EXISTS templates (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  entity_type TEXT NOT NULL,
+  config TEXT NOT NULL,
+  is_default INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+```
+
+### notifications table
+```sql
+CREATE TABLE IF NOT EXISTS notifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT NOT NULL,
+  title TEXT NOT NULL,
+  message TEXT,
+  entity_type TEXT,
+  entity_id INTEGER,
+  is_read INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(type);
+CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(is_read);
+```
+
+
+================================================================================
+8. IPC/DATA FLOW
+================================================================================
+
+## 8.1 Quota Flow
+```
+QuotaManager → useQuotas hook → ipc.quotas.list() → IPC → quotaRepository → DB
+Quota threshold hit → notificationService.notify() → notifications table → NotificationDisplay
+```
+
+## 8.2 Notification Flow
+```
+Service event → notificationService.create() → notifications table
+NotificationDisplay → useNotifications hook → ipc.notifications.list() → IPC → notificationRepository → DB
+Mark read → ipc.notifications.markRead(id) → DB update
+```
+
+## 8.3 Favorite Flow
+```
+Entity page → "Pin" button → useFavorites.add() → ipc.favorites.add() → IPC → favoriteRepository → DB
+Sidebar → useFavorites.list() → ipc.favorites.list() → IPC → favoriteRepository → DB
+```
+
+## 8.4 Template Flow
+```
+Entity page → "Save as Template" → useTemplates.create() → ipc.templates.create() → IPC → templateRepository → DB
+Create from template → useTemplates.createFromEntity() → ipc.templates.createEntity() → entity IPC → DB
+```
+
+
+================================================================================
+9. ACCEPTANCE CRITERIA
+================================================================================
+
+### Quotas
+- [ ] Quotas table created in database
+- [ ] Create/edit/delete quotas works
+- [ ] Quota tracking calculates usage from usage_logs
+- [ ] Reset logic works for daily/weekly/monthly intervals
+- [ ] UpcomingResetsWidget shows real quota data
+
+### Notifications
+- [ ] Notifications table created in database
+- [ ] Notifications generated for quota thresholds
+- [ ] Notification display shows list of notifications
+- [ ] Notification badge shows unread count
+- [ ] Mark as read works
+- [ ] Mark all as read works
+
+### Favorites
+- [ ] Favorites table created in database
+- [ ] Add/remove favorites works
+- [ ] Favorites list displays correctly
+- [ ] Unique constraint prevents duplicates
+
+### Templates
+- [ ] Templates table created in database
+- [ ] Create template from entity works
+- [ ] Create entity from template works
+- [ ] Edit/delete templates works
+
+### Build
+- [ ] npm run build passes with 0 errors
+
+
+================================================================================
+10. VERIFICATION PLAN
+================================================================================
 
 ### Build Verification
-  - Run: npm run build
-  - Expect: 0 errors
-  - Warnings acceptable (chunk size, vite config)
+```bash
+npm run build
+```
+Expected: 0 errors
 
-### Routing Verification
-  - /analytics renders Analytics page
-  - /activity renders Activity page
-  - Sidebar links work for both
+### Manual Verification Steps
+1. Open Dashboard → Verify UpcomingResetsWidget shows quota data
+2. Create a quota → Verify it saves and displays
+3. Trigger quota threshold → Verify notification appears
+4. Click notification badge → Verify notification list
+5. Mark notification as read → Verify badge count decreases
+6. Pin an entity as favorite → Verify it appears in favorites
+7. Unpin entity → Verify it disappears
+8. Create template from entity → Verify template saved
+9. Create entity from template → Verify entity created with template data
 
-### Analytics Verification
-  - Time range selector changes all charts
-  - Usage trends chart renders with data
-  - Cost analysis charts render with data
-  - Model performance charts render with data
-  - Empty states show when no data
-  - Loading states show during fetch
-
-### Activity Verification
-  - Activity list shows entries after entity CRUD
-  - Filter by entity type works
-  - Filter by action works
-  - Filter by date range works
-  - Click entity navigates to detail
-  - Relative timestamps display correctly
-
-### Dashboard Verification
-  - UsageChartWidget shows real data (not mock)
-  - RecentActivityWidget shows real data (not mock)
-  - Both update after entity changes
-
-### CRUD + Activity Logging Verification
-  - Create agent → activity log entry appears
-  - Update agent → activity log entry appears
-  - Delete agent → activity log entry appears
-  - Same for providers, models, projects, notes, tags, accounts, api-keys
-
-### Performance Verification
-  - Charts render without lag
-  - Activity list loads quickly
-  - No unnecessary re-renders
+### Documentation Updates
+- [ ] TASKS.md: Mark Phase 16 items complete
+- [ ] AGENT_RULES.md: Update Phase 16 status
+- [ ] AI_CODING_PLAYBOOK.md: Update Phase 16 status
+- [ ] CODE_REVIEW_CHECKLIST.md: Update Phase 16 status
+- [ ] NEXT_IMPLEMENT_PLAN.TXT: Mark COMPLETE, set next = Phase 17
 
 
-===============================================================================
-13. DOCUMENTATION UPDATES
-===============================================================================
+================================================================================
+11. EXPLICIT OUT OF SCOPE
+================================================================================
 
-After implementation, update:
-
-  TASKS.md
-    - Mark all Phase 14 items as [x] complete
-
-  AGENT_RULES.md
-    - Update line 27: Phase 14 status from "⏳ Pending" to "✅ Completed"
-
-  AI_CODING_PLAYBOOK.md
-    - Update line 27: Phase 14 status from "⏳ Pending" to "✅ Completed"
-
-  CODE_REVIEW_CHECKLIST.md
-    - Update line 27: Phase 14 status from "⏳ Pending" to "✅ Completed"
-
-  NEXT_IMPLEMENT_PLAN.TXT
-    - Update to show Phase 14 complete
-    - Set next phase to Phase 15: Settings, Backup, Import/Export
+1. **Polish and animations** — Phase 17
+2. **Performance optimization** — Phase 17
+3. **Keyboard shortcuts additions** — Phase 17
+4. **Accessibility improvements** — Phase 17
+5. **Testing** — Phase 18
+6. **Saved searches** — May be deferred (not explicitly required by Master Blueprint Section 54)
+7. **Undo/Redo** — Explicitly v2.1 per Master Blueprint
 
 
-===============================================================================
-14. EXPLICIT OUT OF SCOPE
-===============================================================================
+================================================================================
+12. ORDERED IMPLEMENTATION CHECKLIST
+================================================================================
 
-The following are NOT part of Phase 14 and must NOT be implemented:
-
-  - Settings page (Phase 15)
-  - Backup/Import/Export (Phase 15)
-  - Notification service (Phase 15)
-  - Saved searches (Phase 16)
-  - Virtualization for large lists (Phase 17)
-  - Rich text / Markdown rendering (Phase 17 polish)
-  - Note version history (Master Blueprint says "optional, v2.1")
-  - Note file attachments (Master Blueprint says "v2.1")
-  - Performance optimization (Phase 17)
-  - Accessibility audit (Phase 17)
-  - Unit/integration/E2E tests (Phase 18)
-  - Advanced analytics (v2.1 — more charts, ML insights)
-  - Real-time usage tracking (requires external integration)
-  - Cost forecasting beyond trend lines
-  - Custom date range picker (use preset ranges only)
-  - Chart export (PNG/PDF)
-  - Dashboard widget rearrangement
-  - Any changes to existing CRUD functionality
-  - Any changes to API-key security
-  - Any changes to existing IPC architecture
-
-
-===============================================================================
-15. IMPLEMENTATION ORDER / CHECKLIST
-===============================================================================
-
-Step 1: Activity Backend
-  [ ] 1.1  Create electron/migrations/002_activity_usage_tables.sql
-  [ ] 1.2  Create electron/repositories/activity_repository.cjs
-  [ ] 1.3  Create electron/repositories/usage_repository.cjs
-  [ ] 1.4  Create electron/ipc/activity.ipc.cjs
-  [ ] 1.5  Create electron/ipc/analytics.ipc.cjs
-  [ ] 1.6  Update electron/preload.cjs with activity + analytics bridges
-  [ ] 1.7  Update src/lib/ipc.js with activityApi + analyticsApi
-  [ ] 1.8  Run migration (verify tables created)
-  [ ] 1.9  Verify: IPC handlers respond to invocations
-
-Step 2: Activity Logging
-  [ ] 2.1  Add activity logging to electron/ipc/agents.ipc.cjs
-  [ ] 2.2  Add activity logging to electron/ipc/providers.ipc.cjs
-  [ ] 2.3  Add activity logging to electron/ipc/models.ipc.cjs
-  [ ] 2.4  Add activity logging to electron/ipc/projects.ipc.cjs
-  [ ] 2.5  Add activity logging to electron/ipc/notes.ipc.cjs
-  [ ] 2.6  Add activity logging to electron/ipc/tags.ipc.cjs
-  [ ] 2.7  Add activity logging to electron/ipc/api-keys.ipc.cjs
-  [ ] 2.8  Add activity logging to electron/ipc/accounts.ipc.cjs
-  [ ] 2.9  Verify: CRUD operations create activity log entries
-
-Step 3: Analytics Frontend
-  [ ] 3.1  Create src/hooks/use-analytics.js
-  [ ] 3.2  Create src/hooks/use-activity.js
-  [ ] 3.3  Create src/components/features/analytics/usage-trends.jsx
-  [ ] 3.4  Create src/components/features/analytics/cost-analysis.jsx
-  [ ] 3.5  Create src/components/features/analytics/model-performance.jsx
-  [ ] 3.6  Create src/components/features/analytics/index.js
-  [ ] 3.7  Create src/pages/Analytics.jsx
-  [ ] 3.8  Add /analytics route to src/App.jsx
-  [ ] 3.9  Add Analytics link to Sidebar.jsx
-  [ ] 3.10 Verify: Analytics page renders, charts display
-
-Step 4: Activity Frontend
-  [ ] 4.1  Create src/components/features/activity/activity-item.jsx
-  [ ] 4.2  Create src/components/features/activity/activity-list.jsx
-  [ ] 4.3  Create src/components/features/activity/index.js
-  [ ] 4.4  Create src/pages/Activity.jsx
-  [ ] 4.5  Add /activity route to src/App.jsx
-  [ ] 4.6  Add Activity link to Sidebar.jsx
-  [ ] 4.7  Verify: Activity page renders, filtering works
-
-Step 5: Dashboard Updates
-  [ ] 5.1  Update UsageChartWidget.jsx to use real data
-  [ ] 5.2  Update RecentActivityWidget.jsx to use real data
-  [ ] 5.3  Verify: Dashboard shows real data
-
-Step 6: Final Verification
-  [ ] 6.1  Run: npm run build — expect 0 errors
-  [ ] 6.2  Verify /analytics route works
-  [ ] 6.3  Verify /activity route works
-  [ ] 6.4  Verify sidebar navigation complete
-  [ ] 6.5  Verify analytics charts render with data
-  [ ] 6.6  Verify activity logging on all CRUD operations
-  [ ] 6.7  Verify activity filtering works
-  [ ] 6.8  Verify dashboard uses real data
-
-Step 7: Documentation
-  [ ] 7.1  Update TASKS.md — mark Phase 14 items complete
-  [ ] 7.2  Update AGENT_RULES.md — Phase 14 status
-  [ ] 7.3  Update AI_CODING_PLAYBOOK.md — Phase 14 status
-  [ ] 7.4  Update CODE_REVIEW_CHECKLIST.md — Phase 14 status
-  [ ] 7.5  Update NEXT_IMPLEMENT_PLAN.TXT — Phase 14 complete, next = Phase 15
+- [ ] Step 1: Add database migration for quotas, favorites, templates, notifications tables
+- [ ] Step 2: Create quota repository (electron/repositories/quota_repository.cjs)
+- [ ] Step 3: Create notification repository (electron/repositories/notification_repository.cjs)
+- [ ] Step 4: Create favorite repository (electron/repositories/favorite_repository.cjs)
+- [ ] Step 5: Create template repository (electron/repositories/template_repository.cjs)
+- [ ] Step 6: Create notification service (electron/services/notification_service.cjs)
+- [ ] Step 7: Create quotas IPC handler (electron/ipc/quotas.ipc.cjs)
+- [ ] Step 8: Create notifications IPC handler (electron/ipc/notifications.ipc.cjs)
+- [ ] Step 9: Create favorites IPC handler (electron/ipc/favorites.ipc.cjs)
+- [ ] Step 10: Create templates IPC handler (electron/ipc/templates.ipc.cjs)
+- [ ] Step 11: Register all handlers in main.cjs
+- [ ] Step 12: Update preload.cjs with new channels
+- [ Step 13: Update ipc.js client
+- [ ] Step 14: Create useQuotas hook
+- [ ] Step 15: Create useNotifications hook
+- [ ] Step 16: Create useFavorites hook
+- [ ] Step 17: Create useTemplates hook
+- [ ] Step 18: Create QuotaManager component
+- [ ] Step 19: Create NotificationDisplay component
+- [ ] Step 20: Create NotificationBadge component
+- [ ] Step 21: Create FavoritesWidget component
+- [ ] Step 22: Create TemplateManager component
+- [ ] Step 23: Update UpcomingResetsWidget with real data
+- [ ] Step 24: Build verification
+- [ ] Step 25: Update documentation
 
 
-===============================================================================
-END OF PLAN
-===============================================================================
+================================================================================
+NEXT PHASE: Phase 17 — Polish and Performance
+================================================================================
 
 PLAN STATUS: READY FOR IMPLEMENTATION

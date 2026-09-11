@@ -25,7 +25,7 @@
 | Phase 12: Accounts/API Keys | ✅ Completed | Account and API key management |
 | Phase 13: Search/Commands | ✅ Completed | Search, command palette, notes, tags |
 | Phase 14: Analytics | ✅ Complete | 2026-09-11 |
-| Phase 15: Settings/Backup | ⏳ Pending | - |
+| Phase 15: Settings/Backup | ✅ Complete | 2026-09-11 |
 | Phase 16: Quotas/Notifications | ⏳ Pending | - |
 | Phase 17: Polish | ⏳ Pending | - |
 | Phase 18: Testing | ⏳ Pending | - |

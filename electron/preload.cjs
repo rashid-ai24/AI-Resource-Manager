@@ -67,10 +67,12 @@ contextBridge.exposeInMainWorld('api', {
     delete: (key) => ipcRenderer.invoke('settings:delete', key),
   },
   db: {
-    backup: (path) => ipcRenderer.invoke('db:backup', path),
+    backup: () => ipcRenderer.invoke('db:backup'),
     restore: (path) => ipcRenderer.invoke('db:restore', path),
-    export: (format, filters) => ipcRenderer.invoke('db:export', format, filters),
-    import: (path) => ipcRenderer.invoke('db:import', path),
+    export: (format, options) => ipcRenderer.invoke('db:export', format, options),
+    import: (options) => ipcRenderer.invoke('db:import', options),
+    listBackups: () => ipcRenderer.invoke('db:listBackups'),
+    deleteBackup: (path) => ipcRenderer.invoke('db:deleteBackup', path),
   },
   window: {
     minimize: () => ipcRenderer.invoke('window:minimize'),

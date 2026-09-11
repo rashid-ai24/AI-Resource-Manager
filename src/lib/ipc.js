@@ -237,20 +237,28 @@ export const settingsApi = {
 
 // Database API
 export const dbApi = {
-  backup: async (path) => {
-    const result = await api.db.backup(path);
+  backup: async () => {
+    const result = await api.db.backup();
     return handleResponse(result);
   },
   restore: async (path) => {
     const result = await api.db.restore(path);
     return handleResponse(result);
   },
-  export: async (format, filters) => {
-    const result = await api.db.export(format, filters);
+  export: async (format, options) => {
+    const result = await api.db.export(format, options);
     return handleResponse(result);
   },
-  import: async (path) => {
-    const result = await api.db.import(path);
+  import: async (options) => {
+    const result = await api.db.import(options);
+    return handleResponse(result);
+  },
+  listBackups: async () => {
+    const result = await api.db.listBackups();
+    return handleResponse(result);
+  },
+  deleteBackup: async (path) => {
+    const result = await api.db.deleteBackup(path);
     return handleResponse(result);
   },
 };
