@@ -28,6 +28,7 @@ export default defineConfig({
       input: {
         main: 'src/main.jsx',
       },
+      external: ['motion/react'],
     },
   },
 })
